@@ -1,2 +1,2 @@
 ## Programmeerimine II
-### Gunnar Peipani tunnis tehtud tööd lisan siia
+Gunnar Peipani tunnis tehtud tööd lisan siia
