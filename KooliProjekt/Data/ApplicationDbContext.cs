@@ -9,5 +9,8 @@ namespace KooliProjekt.Data
             : base(options)
         {
         }
+        public DbSet<Users> Users {  get; set; }
+        public DbSet<Folders> Folders { get; set; }
+        public DbSet<Pictures> Pictures { get; set; } 
     }
 }
