@@ -1,4 +1,4 @@
-﻿@model IEnumerable<KooliProjekt.Data.Pictures>
+﻿@model PagedResult<KooliProjekt.Data.Pictures>
 
 @{
     ViewData["Title"] = "Index";
@@ -13,31 +13,31 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Folder_id)
+                Folder_id
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ImageData)
+                ImageData
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                Name
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Context)
+                Context
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Creation_date)
+                Creation_date
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Latitude)
+                Latitude
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Longitude)
+                Longitude
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var item in Model.Results) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Folder_id)
@@ -69,3 +69,5 @@
 }
     </tbody>
 </table>
+
+@(await Component.InvokeAsync<PagerViewComponent>(Model))

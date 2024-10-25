@@ -19,9 +19,9 @@ namespace KooliProjekt.Controllers
         }
 
         // GET: Pictures
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1)
         {
-            return View(await _context.Pictures.ToListAsync());
+            return View(await _context.Pictures.GetPagedAsync(page, 5));
         }
 
         // GET: Pictures/Details/5

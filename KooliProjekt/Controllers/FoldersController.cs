@@ -19,9 +19,9 @@ namespace KooliProjekt.Controllers
         }
 
         // GET: Folders
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1)
         {
-            return View(await _context.Folders.ToListAsync());
+            return View(await _context.Folders.GetPagedAsync(page, 5));
         }
 
         // GET: Folders/Details/5
