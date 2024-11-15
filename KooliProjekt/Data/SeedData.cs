@@ -29,7 +29,7 @@ namespace KooliProjekt.Data
                     new TodoItem { Title = "Item 1.10" } 
                 }
             };
-
+                 
             context.TodoLists.Add(list);
 
             context.SaveChanges();
