@@ -38,6 +38,13 @@ namespace KooliProjekt.Data
                 );
             }
 
+            if (!dbContext.Pictures.Any())
+            {
+                dbContext.Pictures.AddRange(
+                    new Pictures { ImageData= ", Name = "image", Context = "hello", Creation_date = DateTime.Now, Latitude = 123, Longitude = 123 }
+                );
+            }
+
             // Save all changes to the database
             dbContext.SaveChanges();
         }
