@@ -34,14 +34,17 @@ namespace KooliProjekt.Data
                     new Folders { Name = "Work", Description = "Work related pictures and documents.", Creation_date = DateTime.Now },
                     new Folders { Name = "Family", Description = "Family photos.", Creation_date = DateTime.Now },
                     new Folders { Name = "Friends", Description = "Friends gathering pictures.", Creation_date = DateTime.Now },
-                    new Folders { Name = "Nature", Description = "Nature photography collection.", Creation_date = DateTime.Now }
-                );
-            }
-
-            if (!dbContext.Pictures.Any())
-            {
-                dbContext.Pictures.AddRange(
-                    new Pictures { ImageData= ", Name = "image", Context = "hello", Creation_date = DateTime.Now, Latitude = 123, Longitude = 123 }
+                    new Folders { Name = "Nature", Description = "Nature photography collection.", Creation_date = DateTime.Now },
+                    new Folders { Name = "Music", Description = "Collection of music albums.", Creation_date = DateTime.Now },
+                    new Folders { Name = "Recipes", Description = "Favorite recipes and cooking tips.", Creation_date = DateTime.Now },
+                    new Folders { Name = "Holidays", Description = "Holidays celebration photos and memories.", Creation_date = DateTime.Now },
+                    new Folders { Name = "Pets", Description = "Cute pictures and videos of pets.", Creation_date = DateTime.Now },
+                    new Folders { Name = "Travel", Description = "Travel destinations and experiences.", Creation_date = DateTime.Now },
+                    new Folders { Name = "Fitness", Description = "Fitness and workout routines.", Creation_date = DateTime.Now },
+                    new Folders { Name = "Books", Description = "Books I've read or want to read.", Creation_date = DateTime.Now },
+                    new Folders { Name = "Tech", Description = "Technology-related articles and resources.", Creation_date = DateTime.Now },
+                    new Folders { Name = "Gaming", Description = "Gaming screenshots and videos.", Creation_date = DateTime.Now },
+                    new Folders { Name = "Art", Description = "Artworks and sketches.", Creation_date = DateTime.Now }
                 );
             }
 
