@@ -6,50 +6,49 @@
 
 <h1>Create</h1>
 
-<h4>Pictures</h4>
+<h4>Picture</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        <!-- Form to upload picture data -->
-        <form asp-action="Create" method="post" enctype="multipart/form-data">
+    <div class="col-md-6">
+        <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <!-- Image Data: File Upload -->
+            <!-- Image Link (Text input instead of file upload) -->
             <div class="form-group">
-                <label asp-for="ImageData" class="control-label"></label>
-                <input asp-for="ImageData" type="file" class="form-control" />
-                <span asp-validation-for="ImageData" class="text-danger"></span>
+                <label asp-for="ImageLink" class="control-label">Image URL</label>
+                <input asp-for="ImageLink" class="form-control" />
+                <span asp-validation-for="ImageLink" class="text-danger"></span>
             </div>
 
-            <!-- Name Input -->
+            <!-- Name -->
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
 
-            <!-- Context Input -->
+            <!-- Context -->
             <div class="form-group">
                 <label asp-for="Context" class="control-label"></label>
                 <input asp-for="Context" class="form-control" />
                 <span asp-validation-for="Context" class="text-danger"></span>
             </div>
 
-            <!-- Creation Date Input -->
+            <!-- Creation Date -->
             <div class="form-group">
                 <label asp-for="Creation_date" class="control-label"></label>
                 <input asp-for="Creation_date" type="datetime-local" class="form-control" />
                 <span asp-validation-for="Creation_date" class="text-danger"></span>
             </div>
 
-            <!-- Latitude Input -->
+            <!-- Latitude -->
             <div class="form-group">
                 <label asp-for="Latitude" class="control-label"></label>
                 <input asp-for="Latitude" class="form-control" />
                 <span asp-validation-for="Latitude" class="text-danger"></span>
             </div>
 
-            <!-- Longitude Input -->
+            <!-- Longitude -->
             <div class="form-group">
                 <label asp-for="Longitude" class="control-label"></label>
                 <input asp-for="Longitude" class="form-control" />
@@ -64,7 +63,6 @@
     </div>
 </div>
 
-<!-- Link back to the list of pictures -->
 <div>
     <a asp-action="Index">Back to List</a>
 </div>

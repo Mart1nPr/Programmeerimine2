@@ -53,7 +53,7 @@ namespace KooliProjekt.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Folder_id,ImageData,Name,Context,Creation_date,Latitude,Longitude")] Pictures pictures)
+        public async Task<IActionResult> Create([Bind("Id,Folder_id,ImageLink,Name,Context,Creation_date,Latitude,Longitude")] Pictures pictures)
         {
             if (ModelState.IsValid)
             {
@@ -85,7 +85,7 @@ namespace KooliProjekt.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Folder_id,ImageData,Name,Context,Creation_date,Latitude,Longitude")] Pictures pictures)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Folder_id,ImageLink,Name,Context,Creation_date,Latitude,Longitude")] Pictures pictures)
         {
             if (id != pictures.Id)
             {

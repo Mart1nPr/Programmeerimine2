@@ -7,7 +7,7 @@ namespace KooliProjekt.Data
         public int Id { get; set; }
 
         [Required]
-        public byte[] ImageData { get; set; }  
+        public string ImageLink { get; set; }  
 
         [Required]
         [StringLength(100)] 
@@ -20,10 +20,8 @@ namespace KooliProjekt.Data
         [Required]
         public DateTime Creation_date { get; set; } = DateTime.UtcNow;  
 
-        [Required]
         public double Latitude { get; set; }
 
-        [Required]
         public double Longitude { get; set; }
     }
 }
