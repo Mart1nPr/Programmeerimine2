@@ -33,7 +33,7 @@ namespace KooliProjekt.Controllers
             }
 
             var folders = await _context.Folders
-                .FirstOrDefaultAsync(m => m.ID == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (folders == null)
             {
                 return NotFound();
@@ -87,7 +87,7 @@ namespace KooliProjekt.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Description,Creation_date")] Folders folders)
         {
-            if (id != folders.ID)
+            if (id != folders.Id)
             {
                 return NotFound();
             }
@@ -101,7 +101,7 @@ namespace KooliProjekt.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!FoldersExists(folders.ID))
+                    if (!FoldersExists(folders.Id))
                     {
                         return NotFound();
                     }
@@ -124,7 +124,7 @@ namespace KooliProjekt.Controllers
             }
 
             var folders = await _context.Folders
-                .FirstOrDefaultAsync(m => m.ID == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (folders == null)
             {
                 return NotFound();
@@ -150,7 +150,7 @@ namespace KooliProjekt.Controllers
 
         private bool FoldersExists(int id)
         {
-            return _context.Folders.Any(e => e.ID == id);
+            return _context.Folders.Any(e => e.Id == id);
         }
     }
 }

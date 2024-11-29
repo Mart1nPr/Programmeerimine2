@@ -1,4 +1,5 @@
 using KooliProjekt.Data;
+using KooliProjekt.Services;  // Don't forget to include the Services namespace
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,6 +20,11 @@ namespace KooliProjekt
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
+
+            // Register the services for dependency injection
+            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IFolderService, FolderService>();
+            builder.Services.AddScoped<IPictureService, PictureService>();
 
             var app = builder.Build();
 
