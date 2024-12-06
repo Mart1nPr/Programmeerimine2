@@ -1,8 +1,7 @@
 ﻿namespace KooliProjekt.Data
 {
-    public class TodoItem
+    public abstract class Entity
     {
         public int Id { get; set; }
-        public string Title { get; set; }
     }
 }
