@@ -1,5 +1,6 @@
 using KooliProjekt.Data;
-using KooliProjekt.Services;  // Don't forget to include the Services namespace
+using KooliProjekt.Data.Repositories;
+using KooliProjekt.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,26 +16,21 @@ namespace KooliProjekt
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
+
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+            // Register the UnitOfWork and Repositories
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>(); // Lisame UnitOfWork teenuse
+            builder.Services.AddScoped<IUsersRepository, UsersRepository>(); // Lisame UserRepository teenuse
+
+            builder.Services.AddScoped<IUserService, UserService>(); // Lisame UserService teenuse
 
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
             builder.Services.AddControllersWithViews();
 
-            // Register the services for dependency injection
-            builder.Services.AddScoped<IUserService, UserService>();
-            builder.Services.AddScoped<IFolderService, FolderService>();
-            builder.Services.AddScoped<IPictureService, PictureService>();
-
             var app = builder.Build();
-
-            // Call the SeedData method during app startup
-            using (var scope = app.Services.CreateScope())
-            {
-                var services = scope.ServiceProvider;
-                var dbContext = services.GetRequiredService<ApplicationDbContext>();
-                SeedData.Generate(dbContext); // Call the SeedData method
-            }
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -49,9 +45,7 @@ namespace KooliProjekt
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
-
             app.UseAuthentication();
             app.UseAuthorization();
 

@@ -3,25 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using KooliProjekt.Data;
+using KooliProjekt.Services;
 
 namespace KooliProjekt.Controllers
 {
     public class UsersController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IUserService _userService;
 
-        public UsersController(ApplicationDbContext context)
+        // Konstruktor, kus anname teenuse, mis kasutab UnitOfWork ja Repository mustrit
+        public UsersController(IUserService userService)
         {
-            _context = context;
+            _userService = userService;
         }
 
         // GET: Users
         public async Task<IActionResult> Index(int page = 1)
         {
-            return View(await _context.Users.GetPagedAsync(page, 5));
+            var users = await _userService.GetAllUsersAsync(page, 5);
+            return View(users);
         }
 
         // GET: Users/Details/5
@@ -32,14 +33,13 @@ namespace KooliProjekt.Controllers
                 return NotFound();
             }
 
-            var users = await _context.Users
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (users == null)
+            var user = await _userService.GetUserByIdAsync(id.Value);
+            if (user == null)
             {
                 return NotFound();
             }
 
-            return View(users);
+            return View(user);
         }
 
         // GET: Users/Create
@@ -49,19 +49,16 @@ namespace KooliProjekt.Controllers
         }
 
         // POST: Users/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Email,Name,Password,Registration_Time")] Users users)
+        public async Task<IActionResult> Create([Bind("Id,Email,Name,Password,Registration_Time")] Users user)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(users);
-                await _context.SaveChangesAsync();
+                await _userService.SaveUserAsync(user);
                 return RedirectToAction(nameof(Index));
             }
-            return View(users);
+            return View(user);
         }
 
         // GET: Users/Edit/5
@@ -72,22 +69,20 @@ namespace KooliProjekt.Controllers
                 return NotFound();
             }
 
-            var users = await _context.Users.FindAsync(id);
-            if (users == null)
+            var user = await _userService.GetUserByIdAsync(id.Value);
+            if (user == null)
             {
                 return NotFound();
             }
-            return View(users);
+            return View(user);
         }
 
         // POST: Users/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Email,Name,Password,Registration_Time")] Users users)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Email,Name,Password,Registration_Time")] Users user)
         {
-            if (id != users.Id)
+            if (id != user.Id)
             {
                 return NotFound();
             }
@@ -96,12 +91,11 @@ namespace KooliProjekt.Controllers
             {
                 try
                 {
-                    _context.Update(users);
-                    await _context.SaveChangesAsync();
+                    await _userService.SaveUserAsync(user);
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception)
                 {
-                    if (!UsersExists(users.Id))
+                    if (!await _userService.UserExistsAsync(user.Id))
                     {
                         return NotFound();
                     }
@@ -112,7 +106,7 @@ namespace KooliProjekt.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(users);
+            return View(user);
         }
 
         // GET: Users/Delete/5
@@ -123,14 +117,13 @@ namespace KooliProjekt.Controllers
                 return NotFound();
             }
 
-            var users = await _context.Users
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (users == null)
+            var user = await _userService.GetUserByIdAsync(id.Value);
+            if (user == null)
             {
                 return NotFound();
             }
 
-            return View(users);
+            return View(user);
         }
 
         // POST: Users/Delete/5
@@ -138,19 +131,8 @@ namespace KooliProjekt.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var users = await _context.Users.FindAsync(id);
-            if (users != null)
-            {
-                _context.Users.Remove(users);
-            }
-
-            await _context.SaveChangesAsync();
+            await _userService.DeleteUserAsync(id);
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool UsersExists(int id)
-        {
-            return _context.Users.Any(e => e.Id == id);
         }
     }
 }
