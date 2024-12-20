@@ -21,7 +21,7 @@ namespace KooliProjekt
 
             // Register the UnitOfWork and Repositories
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>(); // Lisame UnitOfWork teenuse
-            builder.Services.AddScoped<IUsersRepository, UsersRepository>(); // Lisame UserRepository teenuse
+            builder.Services.AddScoped<IUsersRepository, UserRepository>(); // Lisame UserRepository teenuse
 
             builder.Services.AddScoped<IUserService, UserService>(); // Lisame UserService teenuse
 

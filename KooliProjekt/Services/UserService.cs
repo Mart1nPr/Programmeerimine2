@@ -1,7 +1,5 @@
 ﻿using KooliProjekt.Data;
 using KooliProjekt.Data.Repositories;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace KooliProjekt.Services
 {
@@ -24,7 +22,8 @@ namespace KooliProjekt.Services
             if (user != null)
             {
                 _userRepository.Delete(user);
-                await _unitOfWork.SaveAsync(); // Kõik muudatused salvestatakse transaktsioonis
+                await _unitOfWork.CompleteAsync(); 
+
             }
         }
 
@@ -52,7 +51,7 @@ namespace KooliProjekt.Services
                 _userRepository.Update(user);
             }
 
-            await _unitOfWork.SaveAsync(); // Kõik muudatused salvestatakse transaktsioonis
+            await _unitOfWork.CompleteAsync(); // Save changes using CompleteAsync()
         }
     }
 }
