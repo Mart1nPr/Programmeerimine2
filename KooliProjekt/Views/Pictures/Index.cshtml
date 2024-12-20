@@ -1,14 +1,29 @@
-﻿@model PagedResult<KooliProjekt.Data.Pictures>
+﻿@model KooliProjekt.Models.PicturesIndexModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Pictures Index";
 }
 
 <h1>Pictures</h1>
 
+<!-- Otsinguvorm -->
+<form method="get">
+    <div>
+        <label for="Keyword">Search by Keyword:</label>
+        <input type="text" id="Keyword" name="keyword" value="@Model.SearchParams.Keyword" placeholder="Search by Name or Context" />
+    </div>
+    <div>
+        <label for="IsDone">Is Done:</label>
+        <input type="checkbox" id="IsDone" name="isDone" value="true" @(Model.SearchParams.IsDone.HasValue && Model.SearchParams.IsDone.Value ? "checked" : "") />
+    </div>
+    <button type="submit">Search</button>
+</form>
+
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+
+<!-- Tabel koos piltide andmetega -->
 <table class="table">
     <thead>
         <tr>
@@ -22,7 +37,7 @@
                 Context
             </th>
             <th>
-                Creation_date
+                Creation Date
             </th>
             <th>
                 Latitude
@@ -34,34 +49,44 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Results) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.ImageLink)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Context)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Creation_date)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Latitude)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Longitude)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model.Data.Items)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ImageLink)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Context)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Creation_date)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Latitude)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Longitude)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 
-@(await Component.InvokeAsync<PagerViewComponent>(Model))
+<!-- Lehekülje navigeerimine -->
+<div>
+    @for (int i = 1; i <= Model.Data.TotalPages; i++)
+    {
+        <a href="?page=@i&keyword=@Model.SearchParams.Keyword&isDone=@Model.SearchParams.IsDone">@i</a>
+    }
+</div>
+
+<!-- Paginatsioonikomponent -->
+@(await Component.InvokeAsync<PagerViewComponent>(Model.Data))

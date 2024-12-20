@@ -1,17 +1,32 @@
-﻿@model PagedResult<KooliProjekt.Data.Users>
+﻿@model KooliProjekt.Models.UsersIndexModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Users Index";
 }
 
 <h1>Users</h1>
 
+<!-- Otsinguvorm -->
+<form method="get">
+    <div>
+        <label for="Keyword">Search by Keyword:</label>
+        <input type="text" id="Keyword" name="keyword" value="@Model.SearchParams.Keyword" placeholder="Search by Email or Name" />
+    </div>
+    <div>
+        <label for="IsDone">Is Done:</label>
+        <input type="checkbox" id="IsDone" name="isDone" value="true" @(Model.SearchParams.IsDone.HasValue && Model.SearchParams.IsDone.Value ? "checked" : "") />
+    </div>
+    <button type="submit">Search</button>
+</form>
+
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+
+<!-- Tabel koos kasutajate andmetega -->
 <table class="table">
     <thead>
-        <tr> 
+        <tr>
             <th>
                 Email
             </th>
@@ -22,34 +37,44 @@
                 Password
             </th>
             <th>
-                Registration_Time
+                Registration Time
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Results) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Password)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Registration_Time)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model.Data.Items)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Password)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Registration_Time)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 
-@(await Component.InvokeAsync<PagerViewComponent>(Model))
+<!-- Lehekülje navigeerimine -->
+<div>
+    @for (int i = 1; i <= Model.Data.TotalPages; i++)
+    {
+        <a href="?page=@i&keyword=@Model.SearchParams.Keyword&isDone=@Model.SearchParams.IsDone">@i</a>
+    }
+</div>
+
+<!-- Paginatsioonikomponent -->
+@(await Component.InvokeAsync<PagerViewComponent>(Model.Data))

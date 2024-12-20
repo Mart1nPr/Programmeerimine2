@@ -1,12 +1,13 @@
-﻿namespace KooliProjekt.Data
-{
-    public class PagedResult<T> : PagedResultBase where T : class
-    {
-        public IList<T> Results { get; set; }
+﻿using KooliProjekt.Data;
 
-        public PagedResult()
-        {
-            Results = new List<T>();
-        }
+public class PagedResult<T> : PagedResultBase where T : class
+{
+    public IList<T> Results { get; set; } 
+
+    public PagedResult()
+    {
+        Results = new List<T>();
     }
+
+
 }
