@@ -11,7 +11,7 @@ namespace KooliProjekt
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
@@ -33,10 +33,10 @@ namespace KooliProjekt
             {
                 var services = scope.ServiceProvider;
                 var dbContext = services.GetRequiredService<ApplicationDbContext>();
-                SeedData.Generate(dbContext); // Call the SeedData method
+                SeedData.Generate(dbContext); 
             }
 
-            // Configure the HTTP request pipeline.
+            
             if (app.Environment.IsDevelopment())
             {
                 app.UseMigrationsEndPoint();
