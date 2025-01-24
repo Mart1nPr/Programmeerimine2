@@ -1,5 +1,5 @@
 using KooliProjekt.Data;
-using KooliProjekt.Services;  // Don't forget to include the Services namespace
+using KooliProjekt.Services;  
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
