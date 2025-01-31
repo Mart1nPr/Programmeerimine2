@@ -8,7 +8,7 @@ namespace KooliProjekt.Data
         [StringLength(25)]
         public string Name { get; set; }
         [Required]
-        [StringLength(25)]
+        [StringLength(100)]
         public string Description { get; set; }
         public DateTime Creation_date { get; set; } = DateTime.UtcNow;
 
