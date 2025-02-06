@@ -6,22 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using KooliProjekt.Data;
+using KooliProjekt.Services;
 
 namespace KooliProjekt.Controllers
 {
     public class FoldersController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IFolderService _folderService;
 
-        public FoldersController(ApplicationDbContext context)
+        public FoldersController(IFolderService folderService)
         {
-            _context = context;
+            _folderService = folderService;
         }
 
         // GET: Folders
         public async Task<IActionResult> Index(int page = 1)
         {
-            return View(await _context.Folder.GetPagedAsync(page, 5));
+            var data = await _folderService.List(page, 5);
+
+            return View(data);
         }
 
         // GET: Folders/Details/5
@@ -32,8 +35,7 @@ namespace KooliProjekt.Controllers
                 return NotFound();
             }
 
-            var folder = await _context.Folder
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var folder = await _folderService.Get(id.Value);
             if (folder == null)
             {
                 return NotFound();
@@ -57,8 +59,7 @@ namespace KooliProjekt.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(folder);
-                await _context.SaveChangesAsync();
+                await _folderService.Save(folder);
                 return RedirectToAction(nameof(Index));
             }
             return View(folder);
@@ -72,7 +73,7 @@ namespace KooliProjekt.Controllers
                 return NotFound();
             }
 
-            var folder = await _context.Folder.FindAsync(id);
+            var folder = await _folderService.Get(id.Value);
             if (folder == null)
             {
                 return NotFound();
@@ -94,22 +95,7 @@ namespace KooliProjekt.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(folder);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!FolderExists(folder.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                await _folderService.Save(folder);
                 return RedirectToAction(nameof(Index));
             }
             return View(folder);
@@ -123,8 +109,7 @@ namespace KooliProjekt.Controllers
                 return NotFound();
             }
 
-            var folder = await _context.Folder
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var folder = await _folderService.Get(id.Value);
             if (folder == null)
             {
                 return NotFound();
@@ -138,19 +123,9 @@ namespace KooliProjekt.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var folder = await _context.Folder.FindAsync(id);
-            if (folder != null)
-            {
-                _context.Folder.Remove(folder);
-            }
+            await _folderService.Delete(id);
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool FolderExists(int id)
-        {
-            return _context.Folder.Any(e => e.Id == id);
         }
     }
 }

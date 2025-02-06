@@ -6,22 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using KooliProjekt.Data;
+using KooliProjekt.Services;
 
 namespace KooliProjekt.Controllers
 {
     public class PicturesController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IPictureService _pictureService;
 
-        public PicturesController(ApplicationDbContext context)
+        public PicturesController(IPictureService pictureService)
         {
-            _context = context;
+            _pictureService = pictureService;
         }
 
         // GET: Pictures
         public async Task<IActionResult> Index(int page = 1)
         {
-            return View(await _context.Picture.GetPagedAsync(page, 5));
+            var data = await _pictureService.List(page, 5);
+
+            return View(data);
         }
 
         // GET: Pictures/Details/5
@@ -32,8 +35,7 @@ namespace KooliProjekt.Controllers
                 return NotFound();
             }
 
-            var picture = await _context.Picture
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var picture = await _pictureService.Get(id.Value);
             if (picture == null)
             {
                 return NotFound();
@@ -57,8 +59,7 @@ namespace KooliProjekt.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(picture);
-                await _context.SaveChangesAsync();
+                await _pictureService.Save(picture);
                 return RedirectToAction(nameof(Index));
             }
             return View(picture);
@@ -72,7 +73,7 @@ namespace KooliProjekt.Controllers
                 return NotFound();
             }
 
-            var picture = await _context.Picture.FindAsync(id);
+            var picture = await _pictureService.Get(id.Value);
             if (picture == null)
             {
                 return NotFound();
@@ -94,22 +95,7 @@ namespace KooliProjekt.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(picture);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PictureExists(picture.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                await _pictureService.Save(picture);
                 return RedirectToAction(nameof(Index));
             }
             return View(picture);
@@ -123,8 +109,7 @@ namespace KooliProjekt.Controllers
                 return NotFound();
             }
 
-            var picture = await _context.Picture
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var picture = await _pictureService.Get(id.Value);
             if (picture == null)
             {
                 return NotFound();
@@ -138,19 +123,9 @@ namespace KooliProjekt.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var picture = await _context.Picture.FindAsync(id);
-            if (picture != null)
-            {
-                _context.Picture.Remove(picture);
-            }
+            await _pictureService.Delete(id);
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool PictureExists(int id)
-        {
-            return _context.Picture.Any(e => e.Id == id);
         }
     }
 }
