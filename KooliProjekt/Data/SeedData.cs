@@ -4,7 +4,7 @@
     {
         public static void GenerateUsers(ApplicationDbContext context)
         {
-            if (context.User.Any())
+            if (context.Users.Any())
             {
                 return;
             }
@@ -23,14 +23,14 @@
             };
 
             // Add categories to the database context
-            context.User.AddRange(User);
+            context.Users.AddRange(User);
 
             // Save changes to the database
             context.SaveChanges();
         }
         public static void GenerateFolders(ApplicationDbContext context)
         {
-            if (context.Folder.Any())
+            if (context.Folders.Any())
             {
                 return;
             }
@@ -49,14 +49,14 @@
             };
 
             // Add categories to the database context
-            context.Folder.AddRange(Folder);
+            context.Folders.AddRange(Folder);
 
             // Save changes to the database
             context.SaveChanges();
         }
         public static void GeneratePictures(ApplicationDbContext context)
         {
-            if (context.Picture.Any())
+            if (context.Pictures.Any())
             {
                 return;
             }
@@ -75,7 +75,7 @@
             };
 
             // Add categories to the database context
-            context.Picture.AddRange(Picture);
+            context.Pictures.AddRange(Picture);
 
             // Save changes to the database
             context.SaveChanges();
