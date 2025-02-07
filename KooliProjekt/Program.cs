@@ -1,4 +1,5 @@
 using KooliProjekt.Data;
+using KooliProjekt.Data.Repositories;
 using KooliProjekt.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +26,12 @@ namespace KooliProjekt
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IFolderService, FolderService>();
             builder.Services.AddScoped<IPictureService, PictureService>();
+
+            // Repositories: User, Folder, Picture, UnitOfWork
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IFolderRepository, FolderRepository>();
+            builder.Services.AddScoped<IPictureRepository, PictureRepository>();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             var app = builder.Build();
 

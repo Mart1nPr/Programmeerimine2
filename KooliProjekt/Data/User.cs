@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 namespace KooliProjekt.Data
 {
-    public class User
+    public class User : Entity
     {
         public int Id { get; set; }
 

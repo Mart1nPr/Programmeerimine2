@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 namespace KooliProjekt.Data
 {
-    public class Folder
+    public class Folder : Entity
     {
         public int Id { get; set; }
         [Required]
