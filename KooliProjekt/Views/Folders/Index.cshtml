@@ -1,41 +1,35 @@
-﻿@model KooliProjekt.Models.FoldersIndexModel
+﻿@model FoldersIndexModel
 
 @{
-    ViewData["Title"] = "Folders Index";
+    ViewData["Title"] = "Folders";
 }
 
 <h1>Folders</h1>
 
-<!-- Otsinguvorm -->
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
+</p>
+
+<!-- Search Form -->
 <form method="get">
-    <div>
-        <label for="Keyword">Keyword:</label>
-        <input type="text" id="Keyword" name="SearchParams.Keyword" value="@Model.SearchParams.Keyword" placeholder="Search by name" />
+    <div class="form-group">
+        <label class="control-label">Keyword</label>
+        <input asp-for="Search.Keyword" class="form-control" />
     </div>
-    <div>
-        <label for="Done">Done:</label>
-        <input type="checkbox" id="Done" name="SearchParams.Done" value="true" @(Model.SearchParams.Done.HasValue && Model.SearchParams.Done.Value ? "checked" : "") />
+    <div class="form-group">
+        <button class="btn btn-primary">Search</button>
+        <a asp-controller="Folders" asp-action="Index" class="btn btn-secondary">Reset</a>
     </div>
     <button type="submit">Search</button>
 </form>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-
-<!-- Tabel koos kaustade andmetega -->
+<!-- Folders Table -->
 <table class="table">
     <thead>
         <tr>
-            <th>
-                Name
-            </th>
-            <th>
-                Description
-            </th>
-            <th>
-                Creation Date
-            </th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Creation Date</th>
             <th></th>
         </tr>
     </thead>
@@ -43,15 +37,9 @@
         @foreach (var item in Model.Data.Results)
         {
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Creation_date)
-                </td>
+                <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                <td>@Html.DisplayFor(modelItem => item.Creation_date)</td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
@@ -62,13 +50,5 @@
     </tbody>
 </table>
 
-<!-- Lehekülje navigeerimine -->
-<div>
-    @for (int i = 1; i <= Model.Data.TotalPages; i++)
-    {
-        <a href="?page=@i&SearchParams.Keyword=@Model.SearchParams.Keyword&SearchParams.Done=@Model.SearchParams.Done">@i</a>
-    }
-</div>
-
-<!-- Paginatsioonikomponent -->
+<!-- Pagination -->
 @(await Component.InvokeAsync<PagerViewComponent>(Model.Data))

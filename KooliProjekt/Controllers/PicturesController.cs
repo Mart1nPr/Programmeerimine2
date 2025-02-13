@@ -1,53 +1,135 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using KooliProjekt.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using KooliProjekt.Services;
 using KooliProjekt.Models;
 using KooliProjekt.Search;
+using KooliProjekt.Data;
 
 namespace KooliProjekt.Controllers
 {
     public class PicturesController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IPictureService _pictureService;
 
-        public PicturesController(ApplicationDbContext context)
+        public PicturesController(IPictureService pictureService)
         {
-            _context = context;
+            _pictureService = pictureService;
         }
 
         // GET: Pictures
-        public async Task<IActionResult> Index(int page = 1, string keyword = "", bool? isDone = null)
+        public async Task<IActionResult> Index(int page = 1, PicturesSearch search = null)
         {
-            var picturesSearch = new PicturesSearch
-            {
-                Keyword = keyword,
-                IsDone = isDone
-            };
+            search = search ?? new PicturesSearch();
 
-            var query = _context.Pictures.AsQueryable();
-
-            // Rakendame otsingukriteeriumid
-            if (!string.IsNullOrEmpty(picturesSearch.Keyword))
-            {
-                query = query.Where(p => p.Name.Contains(picturesSearch.Keyword) || p.Context.Contains(picturesSearch.Keyword));
-            }
-
-            if (picturesSearch.IsDone.HasValue)
-            {
-                query = query.Where(p => p.IsDone == picturesSearch.IsDone.Value); // Oletame, et on IsDone väli, mis määrab, kas pilt on tehtud või mitte
-            }
-
-            var result = await query.GetPagedAsync(page, 5);  // Lehekülje andmed
+            var result = await _pictureService.List(page, 5, search);
 
             var model = new PicturesIndexModel
             {
-                SearchParams = picturesSearch,
+                Search = search,
                 Data = result
             };
 
             return View(model);
         }
 
-        // Muud meetodid (Create, Edit, Delete, Details) jäävad samaks
+        // GET: Pictures/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var picture = await _pictureService.Get(id.Value);
+            if (picture == null)
+            {
+                return NotFound();
+            }
+
+            return View(picture);
+        }
+
+        // GET: Pictures/Create
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        // POST: Pictures/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("Id,ImageLink,Name,Context,Creation_date,Latitude,Longitude")] Picture picture)
+        {
+            if (ModelState.IsValid)
+            {
+                await _pictureService.Save(picture);
+                return RedirectToAction(nameof(Index));
+            }
+            return View(picture);
+        }
+
+        // GET: Pictures/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var picture = await _pictureService.Get(id.Value);
+            if (picture == null)
+            {
+                return NotFound();
+            }
+            return View(picture);
+        }
+
+        // POST: Pictures/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("Id,ImageLink,Name,Context,Creation_date,Latitude,Longitude")] Picture picture)
+        {
+            if (id != picture.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                await _pictureService.Save(picture);
+                return RedirectToAction(nameof(Index));
+            }
+            return View(picture);
+        }
+
+        // GET: Pictures/Delete/5
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var picture = await _pictureService.Get(id.Value);
+            if (picture == null)
+            {
+                return NotFound();
+            }
+
+            return View(picture);
+        }
+
+        // POST: Pictures/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            await _pictureService.Delete(id);
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

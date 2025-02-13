@@ -1,2 +1,2 @@
 ## Programmeerimine II
-Gunnar Peipmani tunnis tehtud tööd
+ASP.NET core ülesande restart

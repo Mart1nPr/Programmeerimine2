@@ -1,12 +1,14 @@
 ﻿using KooliProjekt.Data;
+using KooliProjekt.Search;
+using System.Threading.Tasks;
 
 namespace KooliProjekt.Services
 {
     public interface IPictureService
     {
-        Task<IEnumerable<Pictures>> GetAllPicturesAsync();
-        Task<Pictures> GetPictureByIdAsync(int id);
-        Task SavePictureAsync(Pictures picture);
-        Task DeletePictureAsync(int id);
+        Task<PagedResult<Picture>> List(int page, int pageSize, PicturesSearch search = null);
+        Task<Picture> Get(int id);
+        Task Save(Picture list);
+        Task Delete(int id);
     }
 }

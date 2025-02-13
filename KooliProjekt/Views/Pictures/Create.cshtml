@@ -1,4 +1,4 @@
-﻿@model KooliProjekt.Data.Pictures
+﻿@model KooliProjekt.Data.Picture
 
 @{
     ViewData["Title"] = "Create";
@@ -15,7 +15,7 @@
 
             <!-- Image Link (Text input instead of file upload) -->
             <div class="form-group">
-                <label asp-for="ImageLink" class="control-label">Image URL</label>
+                <label asp-for="ImageLink" class="control-label"></label>
                 <input asp-for="ImageLink" class="form-control" />
                 <span asp-validation-for="ImageLink" class="text-danger"></span>
             </div>
@@ -37,7 +37,7 @@
             <!-- Creation Date -->
             <div class="form-group">
                 <label asp-for="Creation_date" class="control-label"></label>
-                <input asp-for="Creation_date" type="datetime-local" class="form-control" />
+                <input asp-for="Creation_date" class="form-control" />
                 <span asp-validation-for="Creation_date" class="text-danger"></span>
             </div>
 
@@ -68,7 +68,5 @@
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

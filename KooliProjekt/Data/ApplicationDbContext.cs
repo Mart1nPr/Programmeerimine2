@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using KooliProjekt.Data;
 
 namespace KooliProjekt.Data
 {
@@ -9,8 +10,8 @@ namespace KooliProjekt.Data
             : base(options)
         {
         }
-        public DbSet<Users> Users { get; set; }
-        public DbSet<Pictures> Pictures { get; set; }
-        public DbSet<Folders> Folders { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Folder> Folders { get; set; }
+        public DbSet<Picture> Pictures { get; set; }
     }
 }

@@ -1,5 +1,8 @@
 ﻿using KooliProjekt.Data;
+using KooliProjekt.Search;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace KooliProjekt.Services
 {
@@ -12,7 +15,39 @@ namespace KooliProjekt.Services
             _context = context;
         }
 
-        public async Task DeleteUserAsync(int id)
+        public async Task<PagedResult<User>> List(int page, int pageSize, UsersSearch search = null)
+        {
+            var query = _context.Users.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search?.Keyword))
+            {
+                query = query.Where(user => user.Email.Contains(search.Keyword) || user.Name.Contains(search.Keyword));
+            }
+        }
+
+            return await query.GetPagedAsync(page, pageSize);
+        }
+
+        public async Task<User> Get(int id)
+        {
+            return await _context.Users.FirstOrDefaultAsync(m => m.Id == id);
+        }
+
+        public async Task Save(User user)
+        {
+            if (user.Id == 0)
+            {
+                _context.Add(user);
+            }
+            else
+            {
+                _context.Update(user);
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task Delete(int id)
         {
             var user = await _context.Users.FindAsync(id);
             if (user != null)
@@ -20,30 +55,6 @@ namespace KooliProjekt.Services
                 _context.Users.Remove(user);
                 await _context.SaveChangesAsync();
             }
-        }
-
-        public async Task<Users> GetUserByIdAsync(int id)
-        {
-            return await _context.Users.FindAsync(id);
-        }
-
-        public async Task<IEnumerable<Users>> GetAllUsersAsync()
-        {
-            return await _context.Users.ToListAsync();
-        }
-
-        public async Task SaveUserAsync(Users user)
-        {
-            if (user.Id == 0)
-            {
-                _context.Users.Add(user);
-            }
-            else
-            {
-                _context.Users.Update(user);
-            }
-
-            await _context.SaveChangesAsync();
         }
     }
 }

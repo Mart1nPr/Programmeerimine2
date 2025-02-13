@@ -1,5 +1,5 @@
 using KooliProjekt.Data;
-using KooliProjekt.Services;  
+using KooliProjekt.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,7 +21,7 @@ namespace KooliProjekt
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
 
-            // Register the services for dependency injection
+            // Services: User, Folder, Picture
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IFolderService, FolderService>();
             builder.Services.AddScoped<IPictureService, PictureService>();
@@ -59,6 +59,18 @@ namespace KooliProjekt
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
             app.MapRazorPages();
+#if DEBUG
+            using (var scope = app.Services.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+                context.Database.Migrate();
+
+                SeedData.GenerateUsers(context);
+                SeedData.GenerateFolders(context);
+                SeedData.GeneratePictures(context);
+            }
+#endif
 
             app.Run();
         }

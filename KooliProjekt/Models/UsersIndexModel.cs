@@ -5,7 +5,7 @@ namespace KooliProjekt.Models
 {
     public class UsersIndexModel
     {
-        public UsersSearch SearchParams { get; set; }  
-        public PagedResult<Users> Data { get; set; }    
+        public UsersSearch Search { get; set; }
+        public PagedResult<User> Data { get; set; }
     }
 }

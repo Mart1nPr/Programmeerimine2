@@ -1,13 +1,12 @@
-﻿using KooliProjekt.Data;
-
-public class PagedResult<T> : PagedResultBase where T : class
+﻿namespace KooliProjekt.Data
 {
-    public IList<T> Results { get; set; } 
-
-    public PagedResult()
+    public class PagedResult<T> : PagedResultBase where T : class
     {
-        Results = new List<T>();
+        public IList<T> Results { get; set; }
+
+        public PagedResult()
+        {
+            Results = new List<T>();
+        }
     }
-
-
 }

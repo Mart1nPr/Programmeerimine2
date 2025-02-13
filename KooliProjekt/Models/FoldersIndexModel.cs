@@ -1,11 +1,12 @@
-﻿using KooliProjekt.Data;
+﻿using KooliProjekt.Search;
+using KooliProjekt.Data;
 using KooliProjekt.Search;
 
 namespace KooliProjekt.Models
 {
     public class FoldersIndexModel
     {
-        public FoldersSearch SearchParams { get; set; }  
-        public PagedResult<Folders> Data { get; set; }   
+        public FoldersSearch Search { get; set; }
+        public PagedResult<Folder> Data { get; set; }
     }
 }
