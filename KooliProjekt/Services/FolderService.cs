@@ -1,5 +1,8 @@
 ﻿using KooliProjekt.Data;
+using KooliProjekt.Search;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace KooliProjekt.Services
 {
@@ -12,9 +15,16 @@ namespace KooliProjekt.Services
             _context = context;
         }
 
-        public async Task<PagedResult<Folder>> List(int page, int pageSize)
+        public async Task<PagedResult<Folder>> List(int page, int pageSize, FoldersSearch search = null)
         {
-            return await _context.Folders.GetPagedAsync(page, 5);
+            var query = _context.Folders.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search?.Keyword))
+            {
+                query = query.Where(folder => folder.Name.Contains(search.Keyword) || folder.Description.Contains(search.Keyword));
+            }
+
+            return await query.GetPagedAsync(page, pageSize);
         }
 
         public async Task<Folder> Get(int id)
@@ -22,15 +32,15 @@ namespace KooliProjekt.Services
             return await _context.Folders.FirstOrDefaultAsync(m => m.Id == id);
         }
 
-        public async Task Save(Folder list)
+        public async Task Save(Folder folder)
         {
-            if (list.Id == 0)
+            if (folder.Id == 0)
             {
-                _context.Add(list);
+                _context.Add(folder);
             }
             else
             {
-                _context.Update(list);
+                _context.Update(folder);
             }
 
             await _context.SaveChangesAsync();

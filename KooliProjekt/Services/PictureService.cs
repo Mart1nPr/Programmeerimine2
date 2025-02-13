@@ -1,5 +1,8 @@
 ﻿using KooliProjekt.Data;
+using KooliProjekt.Search;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace KooliProjekt.Services
 {
@@ -12,9 +15,16 @@ namespace KooliProjekt.Services
             _context = context;
         }
 
-        public async Task<PagedResult<Picture>> List(int page, int pageSize)
+        public async Task<PagedResult<Picture>> List(int page, int pageSize, PicturesSearch search = null)
         {
-            return await _context.Pictures.GetPagedAsync(page, 5);
+            var query = _context.Pictures.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search?.Keyword))
+            {
+                query = query.Where(picture => picture.Name.Contains(search.Keyword) || picture.Context.Contains(search.Keyword));
+            }
+
+            return await query.GetPagedAsync(page, pageSize);
         }
 
         public async Task<Picture> Get(int id)
@@ -22,15 +32,15 @@ namespace KooliProjekt.Services
             return await _context.Pictures.FirstOrDefaultAsync(m => m.Id == id);
         }
 
-        public async Task Save(Picture list)
+        public async Task Save(Picture picture)
         {
-            if (list.Id == 0)
+            if (picture.Id == 0)
             {
-                _context.Add(list);
+                _context.Add(picture);
             }
             else
             {
-                _context.Update(list);
+                _context.Update(picture);
             }
 
             await _context.SaveChangesAsync();

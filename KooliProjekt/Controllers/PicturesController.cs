@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using KooliProjekt.Data;
 using KooliProjekt.Services;
+using KooliProjekt.Models;
+using KooliProjekt.Search;
+using KooliProjekt.Data;
 
 namespace KooliProjekt.Controllers
 {
@@ -20,11 +20,19 @@ namespace KooliProjekt.Controllers
         }
 
         // GET: Pictures
-        public async Task<IActionResult> Index(int page = 1)
+        public async Task<IActionResult> Index(int page = 1, PicturesSearch search = null)
         {
-            var data = await _pictureService.List(page, 5);
+            search = search ?? new PicturesSearch();
 
-            return View(data);
+            var result = await _pictureService.List(page, 5, search);
+
+            var model = new PicturesIndexModel
+            {
+                Search = search,
+                Data = result
+            };
+
+            return View(model);
         }
 
         // GET: Pictures/Details/5
@@ -51,8 +59,6 @@ namespace KooliProjekt.Controllers
         }
 
         // POST: Pictures/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,ImageLink,Name,Context,Creation_date,Latitude,Longitude")] Picture picture)
@@ -82,8 +88,6 @@ namespace KooliProjekt.Controllers
         }
 
         // POST: Pictures/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,ImageLink,Name,Context,Creation_date,Latitude,Longitude")] Picture picture)

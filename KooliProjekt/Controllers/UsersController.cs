@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using KooliProjekt.Data;
 using KooliProjekt.Services;
+using KooliProjekt.Search;
+using KooliProjekt.Models;
 
 namespace KooliProjekt.Controllers
 {
@@ -20,9 +22,19 @@ namespace KooliProjekt.Controllers
         }
 
         // GET: Users
-        public async Task<IActionResult> Index(int page = 1)
+        public async Task<IActionResult> Index(int page = 1, UsersSearch search = null)
         {
-            return View(await _userService.List(page, 5));
+            search = search ?? new UsersSearch();
+
+            var result = await _userService.List(page, 5, search);
+
+            var model = new UsersIndexModel
+            {
+                Search = search,
+                Data = result
+            };
+
+            return View(model);
         }
 
         // GET: Users/Details/5
@@ -49,8 +61,6 @@ namespace KooliProjekt.Controllers
         }
 
         // POST: Users/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Email,Name,Password,Registration_Time")] User user)
@@ -80,8 +90,6 @@ namespace KooliProjekt.Controllers
         }
 
         // POST: Users/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Email,Name,Password,Registration_Time")] User user)

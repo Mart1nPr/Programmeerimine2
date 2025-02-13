@@ -1,5 +1,8 @@
 ﻿using KooliProjekt.Data;
+using KooliProjekt.Search;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace KooliProjekt.Services
 {
@@ -12,9 +15,16 @@ namespace KooliProjekt.Services
             _context = context;
         }
 
-        public async Task<PagedResult<User>> List(int page, int pageSize)
+        public async Task<PagedResult<User>> List(int page, int pageSize, UsersSearch search = null)
         {
-            return await _context.Users.GetPagedAsync(page, 5);
+            var query = _context.Users.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search?.Keyword))
+            {
+                query = query.Where(user => user.Email.Contains(search.Keyword) || user.Name.Contains(search.Keyword));
+            }
+
+            return await query.GetPagedAsync(page, pageSize);
         }
 
         public async Task<User> Get(int id)
@@ -22,15 +32,15 @@ namespace KooliProjekt.Services
             return await _context.Users.FirstOrDefaultAsync(m => m.Id == id);
         }
 
-        public async Task Save(User list)
+        public async Task Save(User user)
         {
-            if (list.Id == 0)
+            if (user.Id == 0)
             {
-                _context.Add(list);
+                _context.Add(user);
             }
             else
             {
-                _context.Update(list);
+                _context.Update(user);
             }
 
             await _context.SaveChangesAsync();

@@ -1,67 +1,59 @@
-﻿@model PagedResult<KooliProjekt.Data.Picture>
+﻿@model PicturesIndexModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Pictures";
 }
 
-<h1>Index</h1>
+<h1>Pictures</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary">Create New</a>
 </p>
+
+<!-- Search Form -->
+<form method="get">
+    <div class="form-group">
+        <label class="control-label">Keyword</label>
+        <input asp-for="Search.Keyword" class="form-control" />
+    </div>
+    <div class="form-group">
+        <button class="btn btn-primary">Search</button>
+        <a asp-controller="Pictures" asp-action="Index" class="btn btn-secondary">Reset</a>
+    </div>
+</form>
+
+<!-- Pictures Table -->
 <table class="table">
     <thead>
         <tr>
-            <th>
-                ImageLink
-            </th>
-            <th>
-                Name
-            </th>
-            <th>
-                Context
-            </th>
-            <th>
-                Creation_date
-            </th>
-            <th>
-                Latitude
-            </th>
-            <th>
-                Longitude
-            </th>
+            <th>Image Link</th>
+            <th>Name</th>
+            <th>Context</th>
+            <th>Creation Date</th>
+            <th>Latitude</th>
+            <th>Longitude</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Results) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.ImageLink)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Context)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Creation_date)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Latitude)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Longitude)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model.Data.Results)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.ImageLink)</td>
+                <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                <td>@Html.DisplayFor(modelItem => item.Context)</td>
+                <td>@Html.DisplayFor(modelItem => item.Creation_date)</td>
+                <td>@Html.DisplayFor(modelItem => item.Latitude)</td>
+                <td>@Html.DisplayFor(modelItem => item.Longitude)</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 
-@(await Component.InvokeAsync<PagerViewComponent>(Model))
+<!-- Pagination -->
+@(await Component.InvokeAsync<PagerViewComponent>(Model.Data))
