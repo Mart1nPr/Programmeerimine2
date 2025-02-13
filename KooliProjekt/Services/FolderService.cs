@@ -23,8 +23,6 @@ namespace KooliProjekt.Services
             {
                 query = query.Where(folder => folder.Name.Contains(search.Keyword) || folder.Description.Contains(search.Keyword));
             }
-        }
-
             return await query.GetPagedAsync(page, pageSize);
         }
 

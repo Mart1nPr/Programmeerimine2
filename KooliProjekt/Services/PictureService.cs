@@ -23,7 +23,6 @@ namespace KooliProjekt.Services
             {
                 query = query.Where(picture => picture.Name.Contains(search.Keyword) || picture.Context.Contains(search.Keyword));
             }
-        }
 
             return await query.GetPagedAsync(page, pageSize);
         }

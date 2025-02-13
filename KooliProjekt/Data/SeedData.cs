@@ -7,6 +7,13 @@ namespace KooliProjekt.Data
 {
     public class SeedData
     {
+        public static void Generate(ApplicationDbContext context)
+        {
+            GenerateUsers(context);
+            GenerateFolders(context);
+            GeneratePictures(context);
+        }
+
         public static void GenerateUsers(ApplicationDbContext context)
         {
             if (context.Users.Any())

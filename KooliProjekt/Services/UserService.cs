@@ -23,7 +23,6 @@ namespace KooliProjekt.Services
             {
                 query = query.Where(user => user.Email.Contains(search.Keyword) || user.Name.Contains(search.Keyword));
             }
-        }
 
             return await query.GetPagedAsync(page, pageSize);
         }

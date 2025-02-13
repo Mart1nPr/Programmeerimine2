@@ -66,9 +66,7 @@ namespace KooliProjekt
 
                 context.Database.Migrate();
 
-                SeedData.GenerateUsers(context);
-                SeedData.GenerateFolders(context);
-                SeedData.GeneratePictures(context);
+                SeedData.Generate(context);
             }
 #endif
 

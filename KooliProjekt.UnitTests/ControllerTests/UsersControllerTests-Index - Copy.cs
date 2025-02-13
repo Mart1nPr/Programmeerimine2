@@ -28,13 +28,13 @@ namespace KooliProjekt.UnitTests.ControllerTests
         {
             // Arrange
             int page = 1;
-            var data = new List<Users>
+            var data = new List<User>
             {
-                new Users { Id = 1, Name = "Test 1" },
-                new Users { Id = 2, Name = "Test 2" }
+                new User { Id = 1, Name = "Test 1" },
+                new User { Id = 2, Name = "Test 2" }
             };
-            var pagedResult = new PagedResult<Users> { Results = data };
-            _userServiceMock.Setup(x => x.List(page, It.IsAny<int>())).ReturnsAsync(pagedResult);
+            var pagedResult = new PagedResult<User> { Results = data };
+            _userServiceMock.Setup(x => x.List(page, It.IsAny<int>(), null)).ReturnsAsync(pagedResult);
 
             // Act
             var result = await _controller.Index(page) as ViewResult;

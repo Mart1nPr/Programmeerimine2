@@ -14,13 +14,13 @@ namespace KooliProjekt.UnitTests.ControllerTests
 {
     public class FoldersControllerTests
     {
-        private readonly Mock<IUserService> _FolderServiceMock;
-        private readonly UsersController _controller;
+        private readonly Mock<IFolderService> _FolderServiceMock;
+        private readonly FoldersController _controller;
 
         public FoldersControllerTests()
         {
-            _FolderServiceMock = new Mock<IUserService>();
-            _controller = new UsersController(_FolderServiceMock.Object);
+            _FolderServiceMock = new Mock<IFolderService>();
+            _controller = new FoldersController(_FolderServiceMock.Object);
         }
 
         [Fact]
@@ -28,13 +28,13 @@ namespace KooliProjekt.UnitTests.ControllerTests
         {
             // Arrange
             int page = 1;
-            var data = new List<Folders>
+            var data = new List<Folder>
             {
-                new Folders { Name = "Test 1", Description = "Test folder", Creation_date = DateTime.Now },
-                new Folders { Name = "Test 2", Description = "Test folder 2", Creation_date = DateTime.Now },
+                new Folder { Name = "Test 1", Description = "Test folder", Creation_date = DateTime.Now },
+                new Folder { Name = "Test 2", Description = "Test folder 2", Creation_date = DateTime.Now },
             };
-            var pagedResult = new PagedResult<Users> { Results = data };
-            _FolderServiceMock.Setup(x => x.List(page, It.IsAny<int>())).ReturnsAsync(pagedResult);
+            var pagedResult = new PagedResult<Folder> { Results = data };
+            _FolderServiceMock.Setup(x => x.List(page, It.IsAny<int>(), null)).ReturnsAsync(pagedResult);
 
             // Act
             var result = await _controller.Index(page) as ViewResult;
