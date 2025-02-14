@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using KooliProjekt.Controllers;
@@ -30,8 +33,8 @@ namespace KooliProjekt.UnitTests.ControllerTests
             int page = 1;
             var data = new List<User>
             {
-                new User { Id = 1, Name = "Test 1" },
-                new User { Id = 2, Name = "Test 2" }
+                new User { Id = 1, Name = "Name1", Password = "Password1", Registration_Time = DateTime.Now},
+                new User { Id = 2, Name = "Name2", Password = "Password2", Registration_Time = DateTime.Now},
             };
             var pagedResult = new PagedResult<User> { Results = data };
             _userServiceMock.Setup(x => x.List(page, It.IsAny<int>(), null)).ReturnsAsync(pagedResult);

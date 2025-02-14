@@ -30,8 +30,8 @@ namespace KooliProjekt.UnitTests.ControllerTests
             int page = 1;
             var data = new List<Folder>
             {
-                new Folder { Name = "Test 1", Description = "Test folder", Creation_date = DateTime.Now },
-                new Folder { Name = "Test 2", Description = "Test folder 2", Creation_date = DateTime.Now },
+                new Folder { Name = "Name1", Description = "Description1", Creation_date = DateTime.Now },
+                new Folder { Name = "Name2", Description = "Description2", Creation_date = DateTime.Now },
             };
             var pagedResult = new PagedResult<Folder> { Results = data };
             _FolderServiceMock.Setup(x => x.List(page, It.IsAny<int>(), null)).ReturnsAsync(pagedResult);
