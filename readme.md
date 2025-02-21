@@ -1,2 +1,2 @@
 ## Programmeerimine II
-ASP.NET core ülesande restart
+ASP.NET core ülesanne
