@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using KooliProjekt.Controllers;
@@ -29,7 +26,7 @@ namespace KooliProjekt.UnitTests.ControllerTests
         }
 
         [Fact]
-        public async Task Index_should_return_correct_view_with_data()
+        public async Task Index_should_return_view_and_data()
         {
             // Arrange
             int page = 1;
@@ -38,19 +35,82 @@ namespace KooliProjekt.UnitTests.ControllerTests
                 new User { Id = 1, Name = "Name1", Password = "Password1", Registration_Time = DateTime.Now },
                 new User { Id = 2, Name = "Name2", Password = "Password2", Registration_Time = DateTime.Now }
             };
-            var pagedResult = new PagedResult<User> { Results = data };
-
-            // Setup mock service to return the paged result
-            _userServiceMock.Setup(x => x.List(page, 5, It.IsAny<UsersSearch>())).ReturnsAsync(pagedResult);
+            var pagedResult = new PagedResult<User>
+            {
+                Results = data,
+                CurrentPage = 1,
+                PageCount = 1,
+                PageSize = 5,
+                RowCount = 2
+            };
+            _userServiceMock.Setup(x => x.List(page, It.IsAny<int>(), It.IsAny<UsersSearch>())).ReturnsAsync(pagedResult);
 
             // Act
-            var result = await _controller.Index(page) as ViewResult;
+            var result = await _controller.Index(page, null) as ViewResult;
 
             // Assert
-            Assert.NotNull(result);  
+            Assert.NotNull(result);  // Ensure the result is not null
             var model = result.Model as UsersIndexModel;
-            Assert.NotNull(model);  
-            Assert.Equal(pagedResult, model.Data);
+            Assert.NotNull(model);  // Ensure the model is of type UsersIndexModel
+            Assert.Equal(pagedResult, model.Data);  // Assert that the paged result matches the model's data
+        }
+
+        [Fact]
+        public async Task Details_should_return_view_with_model_when_user_found()
+        {
+            // Arrange
+            int id = 1;
+            var user = new User { Id = id, Name = "User 1", Password = "Password1", Registration_Time = DateTime.Now };
+            _userServiceMock.Setup(x => x.Get(id)).ReturnsAsync(user);
+
+            // Act
+            var result = await _controller.Details(id) as ViewResult;
+
+            // Assert
+            Assert.NotNull(result);  // Ensure the result is a ViewResult
+            Assert.Equal(user, result.Model);  // Assert that the model returned matches the expected user
+        }
+
+        [Fact]
+        public async Task Edit_should_return_view_with_model_when_user_found()
+        {
+            // Arrange
+            int id = 1;
+            var user = new User { Id = id, Name = "User 1", Password = "Password1", Registration_Time = DateTime.Now };
+            _userServiceMock.Setup(x => x.Get(id)).ReturnsAsync(user);
+
+            // Act
+            var result = await _controller.Edit(id) as ViewResult;
+
+            // Assert
+            Assert.NotNull(result);  // Ensure the result is a ViewResult
+            Assert.Equal(user, result.Model);  // Assert that the model returned matches the expected user
+        }
+
+        [Fact]
+        public async Task Delete_should_return_view_with_model_when_user_found()
+        {
+            // Arrange
+            int id = 1;
+            var user = new User { Id = id, Name = "User 1", Password = "Password1", Registration_Time = DateTime.Now };
+            _userServiceMock.Setup(x => x.Get(id)).ReturnsAsync(user);
+
+            // Act
+            var result = await _controller.Delete(id) as ViewResult;
+
+            // Assert
+            Assert.NotNull(result);  // Ensure the result is a ViewResult
+            Assert.Equal(user, result.Model);  // Assert that the model returned matches the expected user
+        }
+
+        [Fact]
+        public void Create_should_return_view()
+        {
+            // Act
+            var result = _controller.Create() as ViewResult;
+
+            // Assert
+            Assert.NotNull(result);  // Ensure the result is a ViewResult
         }
     }
 }
