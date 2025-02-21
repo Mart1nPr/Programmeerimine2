@@ -12,6 +12,8 @@ using KooliProjekt.Services;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
+using KooliProjekt.Models;
+using KooliProjekt.Search;
 
 namespace KooliProjekt.UnitTests.ControllerTests
 {
@@ -33,18 +35,23 @@ namespace KooliProjekt.UnitTests.ControllerTests
             int page = 1;
             var data = new List<Picture>
             {
-                new Picture {ImageLink = "Img2", Name = "Name1", Context = "Context", Creation_date = DateTime.Now, Latitude=38, Longitude = 58},
-                new Picture {ImageLink = "Img2", Name = "Name2", Context = "Context2", Creation_date = DateTime.Now, Latitude=29, Longitude = 59},
+                new Picture { ImageLink = "Img1", Name = "Name1", Context = "Context1", Creation_date = DateTime.Now, Latitude = 38, Longitude = 58 },
+                new Picture { ImageLink = "Img2", Name = "Name2", Context = "Context2", Creation_date = DateTime.Now, Latitude = 29, Longitude = 59 }
             };
             var pagedResult = new PagedResult<Picture> { Results = data };
-            _PictureServiceMock.Setup(x => x.List(page, It.IsAny<int>(), null)).ReturnsAsync(pagedResult);
+
+            // Setup mock service to return the paged result
+            _PictureServiceMock.Setup(x => x.List(page, 5, It.IsAny<PicturesSearch>())).ReturnsAsync(pagedResult);
 
             // Act
             var result = await _controller.Index(page) as ViewResult;
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(pagedResult, result.Model);
+            var model = result.Model as PicturesIndexModel;
+            Assert.NotNull(model);
+            Assert.Equal(pagedResult, model.Data);
         }
+
     }
 }

@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using KooliProjekt.Controllers;
 using KooliProjekt.Data;
+using KooliProjekt.Models;
+using KooliProjekt.Search;
 using KooliProjekt.Services;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -33,15 +35,20 @@ namespace KooliProjekt.UnitTests.ControllerTests
                 new Folder { Name = "Name1", Description = "Description1", Creation_date = DateTime.Now },
                 new Folder { Name = "Name2", Description = "Description2", Creation_date = DateTime.Now },
             };
-            var pagedResult = new PagedResult<Folder> { Results = data };
-            _FolderServiceMock.Setup(x => x.List(page, It.IsAny<int>(), null)).ReturnsAsync(pagedResult);
+            var pagedResult = new PagedResult<Folder> { Results = data };  // The expected paged result
+
+            // Setup mock service to return the paged result
+            _FolderServiceMock.Setup(x => x.List(page, 5, It.IsAny<FoldersSearch>())).ReturnsAsync(pagedResult);
 
             // Act
-            var result = await _controller.Index(page) as ViewResult;
+            var result = await _controller.Index(page) as ViewResult;  // Call the Index method
 
             // Assert
-            Assert.NotNull(result);
-            Assert.Equal(pagedResult, result.Model);
+            Assert.NotNull(result); 
+            var model = result.Model as FoldersIndexModel;
+            Assert.NotNull(model);
+            Assert.Equal(pagedResult, model.Data);
         }
+
     }
 }
