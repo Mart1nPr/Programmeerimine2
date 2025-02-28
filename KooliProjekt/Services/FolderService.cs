@@ -15,6 +15,12 @@ namespace KooliProjekt.Services
             _context = context;
         }
 
+        public async Task Create(Folder folder)
+        {
+            _context.Folders.Add(folder);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<PagedResult<Folder>> List(int page, int pageSize, FoldersSearch search = null)
         {
             var query = _context.Folders.AsQueryable();

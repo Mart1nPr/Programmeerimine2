@@ -49,10 +49,10 @@ namespace KooliProjekt.UnitTests.ControllerTests
             var result = await _controller.Index(page, null) as ViewResult;
 
             // Assert
-            Assert.NotNull(result);  // Ensure the result is not null
+            Assert.NotNull(result);
             var model = result.Model as UsersIndexModel;
-            Assert.NotNull(model);  // Ensure the model is of type UsersIndexModel
-            Assert.Equal(pagedResult, model.Data);  // Assert that the paged result matches the model's data
+            Assert.NotNull(model);
+            Assert.Equal(pagedResult, model.Data);
         }
 
         [Fact]
@@ -67,8 +67,8 @@ namespace KooliProjekt.UnitTests.ControllerTests
             var result = await _controller.Details(id) as ViewResult;
 
             // Assert
-            Assert.NotNull(result);  // Ensure the result is a ViewResult
-            Assert.Equal(user, result.Model);  // Assert that the model returned matches the expected user
+            Assert.NotNull(result);
+            Assert.Equal(user, result.Model);
         }
 
         [Fact]
@@ -83,8 +83,8 @@ namespace KooliProjekt.UnitTests.ControllerTests
             var result = await _controller.Edit(id) as ViewResult;
 
             // Assert
-            Assert.NotNull(result);  // Ensure the result is a ViewResult
-            Assert.Equal(user, result.Model);  // Assert that the model returned matches the expected user
+            Assert.NotNull(result);
+            Assert.Equal(user, result.Model);
         }
 
         [Fact]
@@ -99,8 +99,8 @@ namespace KooliProjekt.UnitTests.ControllerTests
             var result = await _controller.Delete(id) as ViewResult;
 
             // Assert
-            Assert.NotNull(result);  // Ensure the result is a ViewResult
-            Assert.Equal(user, result.Model);  // Assert that the model returned matches the expected user
+            Assert.NotNull(result);
+            Assert.Equal(user, result.Model);
         }
 
         [Fact]
@@ -110,7 +110,80 @@ namespace KooliProjekt.UnitTests.ControllerTests
             var result = _controller.Create() as ViewResult;
 
             // Assert
-            Assert.NotNull(result);  // Ensure the result is a ViewResult
+            Assert.NotNull(result);
+        }
+
+        [Fact]
+        public async Task Create_should_return_view_when_model_is_invalid()
+        {
+            // Arrange
+            _controller.ModelState.AddModelError("Name", "Name is required");
+
+            // Act
+            var result = await _controller.Create(new User()) as ViewResult;
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.True(!_controller.ModelState.IsValid);
+        }
+
+        [Fact]
+        public async Task Create_should_redirect_to_index_when_model_is_valid()
+        {
+            // Arrange
+            var newUser = new User { Name = "New User", Password = "Password", Registration_Time = DateTime.Now };
+            _userServiceMock.Setup(x => x.Create(It.IsAny<User>())).Returns(Task.CompletedTask);
+
+            // Act
+            var result = await _controller.Create(newUser) as RedirectToActionResult;
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal("Index", result.ActionName);
+        }
+
+        [Fact]
+        public async Task Edit_should_return_not_found_when_user_does_not_exist()
+        {
+            // Arrange
+            int id = 999;
+            _userServiceMock.Setup(x => x.Get(id)).ReturnsAsync((User)null);
+
+            // Act
+            var result = await _controller.Edit(id);
+
+            // Assert
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+        [Fact]
+        public async Task Delete_should_redirect_to_index_when_user_deleted()
+        {
+            // Arrange
+            int id = 1;
+            var user = new User { Id = id, Name = "User 1", Password = "Password1", Registration_Time = DateTime.Now };
+            _userServiceMock.Setup(x => x.Delete(id)).Returns(Task.CompletedTask);
+
+            // Act
+            var result = await _controller.DeleteConfirmed(id) as RedirectToActionResult;
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal("Index", result.ActionName);
+        }
+
+        [Fact]
+        public async Task Delete_should_return_not_found_when_user_not_found()
+        {
+            // Arrange
+            int id = 999;
+            _userServiceMock.Setup(x => x.Get(id)).ReturnsAsync((User)null);
+
+            // Act
+            var result = await _controller.Delete(id);
+
+            // Assert
+            Assert.IsType<NotFoundResult>(result);
         }
     }
 }

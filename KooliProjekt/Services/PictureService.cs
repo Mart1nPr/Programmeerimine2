@@ -15,6 +15,12 @@ namespace KooliProjekt.Services
             _context = context;
         }
 
+        public async Task Create(Picture picture)
+        {
+            _context.Pictures.Add(picture);  
+            await _context.SaveChangesAsync();  
+        }
+
         public async Task<PagedResult<Picture>> List(int page, int pageSize, PicturesSearch search = null)
         {
             var query = _context.Pictures.AsQueryable();
