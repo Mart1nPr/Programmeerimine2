@@ -2,7 +2,7 @@
 using KooliProjekt.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace KooliProjekt.Controllers
+namespace KooliProjekt.Controllers 
 {
     [Route("api/Users")]
     [ApiController]
