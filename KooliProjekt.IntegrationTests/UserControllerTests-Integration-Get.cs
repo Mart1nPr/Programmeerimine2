@@ -60,7 +60,7 @@ namespace KooliProjekt.IntegrationTests
         public async Task Details_should_return_success_status_code_when_user_exists()
         {
             // Arrange
-            var user = new User { Email = "testuser@example.com", Name = "Test User", Password = "Password123", Registration_Time = System.DateTime.Now };
+            var user = new User { Email = "test.test@gmail.com", Name = "Test", Password = "Test123", Registration_Time = System.DateTime.Now };
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 

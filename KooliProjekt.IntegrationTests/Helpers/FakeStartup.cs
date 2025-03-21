@@ -1,7 +1,7 @@
 ﻿using System;
 using KooliProjekt.Controllers;
 using KooliProjekt.Data;
-using KooliProjekt.Services;  // Add this if IUserService is in the Services namespace
+using KooliProjekt.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -29,8 +29,10 @@ namespace KooliProjekt.IntegrationTests.Helpers
                 options.UseInMemoryDatabase(dbGuid);  // Use in-memory DB for isolation between tests
             });
 
-            // Register your IUserService
-            services.AddScoped<IUserService, UserService>();  // Ensure IUserService is registered
+            // Services
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IFolderService, FolderService>();
+            services.AddScoped<IPictureService, PictureService>();
 
             // Register identity services for authentication
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
