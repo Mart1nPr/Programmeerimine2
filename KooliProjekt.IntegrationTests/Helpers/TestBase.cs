@@ -1,12 +1,16 @@
-﻿using System;
-using KooliProjekt.Data;
+﻿using KooliProjekt.Data;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace KooliProjekt.IntegrationTests.Helpers
 {
     public abstract class TestBase : IDisposable
     {
         public WebApplicationFactory<FakeStartup> Factory { get; }
+
+        // Expose ApplicationDbContext through a property
+        protected ApplicationDbContext _context => Factory.Services.GetService<ApplicationDbContext>();
 
         public TestBase()
         {
@@ -15,7 +19,7 @@ namespace KooliProjekt.IntegrationTests.Helpers
 
         public void Dispose()
         {
-            var dbContext = (ApplicationDbContext)Factory.Services.GetService(typeof(ApplicationDbContext));
+            var dbContext = _context;
             dbContext.Database.EnsureDeleted();
         }
 
