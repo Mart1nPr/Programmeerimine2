@@ -17,14 +17,12 @@ namespace WpfApp1.Api
             _httpClient = new HttpClient();
             _httpClient.BaseAddress = new Uri("https://localhost:7136/api/");
         }
-
         public async Task<List<User>> List()
         {
             var result = await _httpClient.GetFromJsonAsync<List<User>>("Users");
 
             return result;
         }
-
         public async Task Save(User list)
         {
             if (list.Id == 0)
@@ -36,10 +34,13 @@ namespace WpfApp1.Api
                 await _httpClient.PutAsJsonAsync("Users/" + list.Id, list);
             }
         }
-
         public async Task Delete(int id)
         {
             await _httpClient.DeleteAsync("Users/" + id);
+        }
+        public Task<IEnumerable<object>> List<T>()
+        {
+            throw new NotImplementedException();
         }
     }
 }
