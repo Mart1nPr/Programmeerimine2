@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KooliProjekt.IntegrationTes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KooliProjekt.WpfApp", "..\..\..\Downloads\KooliProjekt.WpfApp\KooliProjekt.WpfApp.csproj", "{AAADC431-A830-26F8-1593-FCA2BEFE5092}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KooliProjekt.WpfApp.UnitTests", "WpfApp.UnitTests\KooliProjekt.WpfApp.UnitTests.csproj", "{B69EEEFA-8DC5-41DD-9563-3B61E8FC9F68}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{AAADC431-A830-26F8-1593-FCA2BEFE5092}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AAADC431-A830-26F8-1593-FCA2BEFE5092}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AAADC431-A830-26F8-1593-FCA2BEFE5092}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B69EEEFA-8DC5-41DD-9563-3B61E8FC9F68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B69EEEFA-8DC5-41DD-9563-3B61E8FC9F68}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B69EEEFA-8DC5-41DD-9563-3B61E8FC9F68}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B69EEEFA-8DC5-41DD-9563-3B61E8FC9F68}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
