@@ -1,2 +1,3 @@
 ## Programmeerimine II
-ASP.NET core ülesanne
+.NET projekt Gunnar Peipmani tunnis <br>
+Teema: Meediakogu
