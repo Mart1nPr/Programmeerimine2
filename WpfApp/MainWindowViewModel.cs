@@ -28,7 +28,6 @@ namespace WpfApp
 
         public MainWindowViewModel() : this(new ApiClient())
         {
-           
         }
 
         public MainWindowViewModel(IApiClient apiClient)
@@ -37,31 +36,20 @@ namespace WpfApp
             Users = new ObservableCollection<User>();
 
             NewCommand = new RelayCommand<User>(
-                user =>
-                {
-                    SelectedUser = new User();
-                }
+                user => { SelectedUser = new User(); }
             );
 
             SaveCommand = new RelayCommand<User>(
                 async user =>
                 {
-                    try
+                    var result = await _apiClient.Save(SelectedUser);
+                    if (result.HasError)
                     {
-                        if (SelectedUser.Id == 0)
-                        {
-                            await _apiClient.Save(SelectedUser);
-                        }
-                        else
-                        {
-                            await _apiClient.Save(SelectedUser);
-                        }
-                        await LoadUsers();
+                        OnError?.Invoke($"Error while saving user: {result.Error}");
+                        return;
                     }
-                    catch (Exception ex)
-                    {
-                        OnError?.Invoke($"Error while saving user: {ex.Message}");
-                    }
+
+                    await LoadUsers();
                 },
                 user => SelectedUser != null
             );
@@ -69,18 +57,17 @@ namespace WpfApp
             DeleteCommand = new RelayCommand<User>(
                 async user =>
                 {
-                    try
+                    if (ConfirmDelete?.Invoke(SelectedUser) ?? true)
                     {
-                        if (ConfirmDelete?.Invoke(SelectedUser) ?? true)
+                        var result = await _apiClient.Delete(SelectedUser.Id);
+                        if (result.HasError)
                         {
-                            await _apiClient.Delete(SelectedUser.Id);
-                            Users.Remove(SelectedUser);
-                            SelectedUser = null;
+                            OnError?.Invoke($"Error while deleting user: {result.Error}");
+                            return;
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        OnError?.Invoke($"Error while deleting user: {ex.Message}");
+
+                        Users.Remove(SelectedUser);
+                        SelectedUser = null;
                     }
                 },
                 user => SelectedUser != null
@@ -91,23 +78,16 @@ namespace WpfApp
         {
             Users.Clear();
 
-            try
+            var result = await _apiClient.List();
+            if (result.HasError)
             {
-                var users = await _apiClient.List();
-                if (users == null)
-                {
-                    OnError?.Invoke("Failed to load users. The response was null.");
-                    return;
-                }
-
-                foreach (var user in users)
-                {
-                    Users.Add(user);
-                }
+                OnError?.Invoke($"Error while loading users: {result.Error}");
+                return;
             }
-            catch (Exception ex)
+
+            foreach (var user in result.Value)
             {
-                OnError?.Invoke($"Error while loading users: {ex.Message}");
+                Users.Add(user);
             }
         }
     }

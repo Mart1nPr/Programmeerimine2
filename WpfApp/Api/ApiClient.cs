@@ -3,7 +3,7 @@ using System.Net.Http.Json;
 
 namespace WpfApp.Api
 {
-    class ApiClient : IApiClient
+    public class ApiClient : IApiClient
     {
         private readonly HttpClient _httpClient;
 
@@ -13,22 +13,56 @@ namespace WpfApp.Api
             _httpClient.BaseAddress = new Uri("https://localhost:7136/api/");
         }
 
-        public async Task<List<User>> List()
+        public async Task<Result<List<User>>> List()
         {
-            return await _httpClient.GetFromJsonAsync<List<User>>("Users");
+            try
+            {
+                var users = await _httpClient.GetFromJsonAsync<List<User>>("Users");
+                return new Result<List<User>> { Value = users };
+            }
+            catch (Exception ex)
+            {
+                return new Result<List<User>> { Error = ex.Message };
+            }
         }
 
-        public async Task Save(User user)
+        public async Task<Result> Save(User user)
         {
-            if (user.Id == 0)
-                await _httpClient.PostAsJsonAsync("Users", user);
-            else
-                await _httpClient.PutAsJsonAsync($"Users/{user.Id}", user);
+            try
+            {
+                HttpResponseMessage response;
+
+                if (user.Id == 0)
+                    response = await _httpClient.PostAsJsonAsync("Users", user);
+                else
+                    response = await _httpClient.PutAsJsonAsync($"Users/{user.Id}", user);
+
+                if (!response.IsSuccessStatusCode)
+                    return new Result { Error = $"HTTP {(int)response.StatusCode}: {response.ReasonPhrase}" };
+
+                return new Result();
+            }
+            catch (Exception ex)
+            {
+                return new Result { Error = ex.Message };
+            }
         }
 
-        public async Task Delete(int id)
+        public async Task<Result> Delete(int id)
         {
-            await _httpClient.DeleteAsync($"Users/{id}");
+            try
+            {
+                var response = await _httpClient.DeleteAsync($"Users/{id}");
+
+                if (!response.IsSuccessStatusCode)
+                    return new Result { Error = $"HTTP {(int)response.StatusCode}: {response.ReasonPhrase}" };
+
+                return new Result();
+            }
+            catch (Exception ex)
+            {
+                return new Result { Error = ex.Message };
+            }
         }
     }
 }

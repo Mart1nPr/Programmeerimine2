@@ -1,7 +1,4 @@
 using Moq;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using WpfApp;
 using WpfApp.Api;
 
 namespace WpfApp.UnitTests
@@ -27,7 +24,9 @@ namespace WpfApp.UnitTests
                 new User { Id = 2, Name = "Bob", Email = "bob@example.com" }
             };
 
-            _mockApiClient.Setup(api => api.List()).ReturnsAsync(users);
+            _mockApiClient
+                .Setup(api => api.List())
+                .ReturnsAsync(Result<List<User>>.Success(users));
 
             // Act
             await _viewModel.LoadUsers();
@@ -39,19 +38,21 @@ namespace WpfApp.UnitTests
         }
 
         [Fact]
-        public async Task LoadUsers_ShouldCallOnError_WhenApiReturnsNull()
+        public async Task LoadUsers_ShouldCallOnError_WhenApiReturnsError()
         {
             // Arrange
             string error = null;
             _viewModel.OnError = msg => error = msg;
 
-            _mockApiClient.Setup(api => api.List()).ReturnsAsync((List<User>)null);
+            _mockApiClient
+                .Setup(api => api.List())
+                .ReturnsAsync(Result<List<User>>.Failure("API failed"));
 
             // Act
             await _viewModel.LoadUsers();
 
             // Assert
-            Assert.Equal("Failed to load users. The response was null.", error);
+            Assert.Equal("Error while loading users: API failed", error);
         }
 
         [Fact]
@@ -61,8 +62,13 @@ namespace WpfApp.UnitTests
             var user = new User { Id = 0, Name = "New User", Email = "new@example.com" };
             _viewModel.SelectedUser = user;
 
-            _mockApiClient.Setup(api => api.Save(user)).Returns(Task.CompletedTask);
-            _mockApiClient.Setup(api => api.List()).ReturnsAsync(new List<User>());
+            _mockApiClient
+                .Setup(api => api.Save(user))
+                .ReturnsAsync(Result.Success());
+
+            _mockApiClient
+                .Setup(api => api.List())
+                .ReturnsAsync(Result<List<User>>.Success(new List<User>()));
 
             // Act
             await Task.Run(() => _viewModel.SaveCommand.Execute(user));
@@ -81,7 +87,9 @@ namespace WpfApp.UnitTests
             _viewModel.SelectedUser = user;
             _viewModel.ConfirmDelete = u => true;
 
-            _mockApiClient.Setup(api => api.Delete(user.Id)).Returns(Task.CompletedTask);
+            _mockApiClient
+                .Setup(api => api.Delete(user.Id))
+                .ReturnsAsync(Result.Success());
 
             // Act
             await Task.Run(() => _viewModel.DeleteCommand.Execute(user));
@@ -121,7 +129,7 @@ namespace WpfApp.UnitTests
         }
 
         [Fact]
-        public async Task SaveCommand_ShouldCallOnError_WhenSaveThrows()
+        public async Task SaveCommand_ShouldCallOnError_WhenSaveReturnsError()
         {
             // Arrange
             string error = null;
@@ -129,17 +137,19 @@ namespace WpfApp.UnitTests
             _viewModel.SelectedUser = user;
             _viewModel.OnError = msg => error = msg;
 
-            _mockApiClient.Setup(api => api.Save(user)).ThrowsAsync(new Exception("Save failed"));
+            _mockApiClient
+                .Setup(api => api.Save(user))
+                .ReturnsAsync(Result.Failure("Save failed"));
 
             // Act
             await Task.Run(() => _viewModel.SaveCommand.Execute(user));
 
             // Assert
-            Assert.StartsWith("Error while saving user:", error);
+            Assert.Equal("Error while saving user: Save failed", error);
         }
 
         [Fact]
-        public async Task DeleteCommand_ShouldCallOnError_WhenDeleteThrows()
+        public async Task DeleteCommand_ShouldCallOnError_WhenDeleteReturnsError()
         {
             // Arrange
             string error = null;
@@ -149,13 +159,15 @@ namespace WpfApp.UnitTests
             _viewModel.ConfirmDelete = u => true;
             _viewModel.OnError = msg => error = msg;
 
-            _mockApiClient.Setup(api => api.Delete(user.Id)).ThrowsAsync(new Exception("Delete failed"));
+            _mockApiClient
+                .Setup(api => api.Delete(user.Id))
+                .ReturnsAsync(Result.Failure("Delete failed"));
 
             // Act
             await Task.Run(() => _viewModel.DeleteCommand.Execute(user));
 
             // Assert
-            Assert.StartsWith("Error while deleting user:", error);
+            Assert.Equal("Error while deleting user: Delete failed", error);
         }
     }
 }
