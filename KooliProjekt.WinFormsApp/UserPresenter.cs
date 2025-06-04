@@ -1,4 +1,6 @@
-﻿using KooliProjekt.WinFormsApp.Api;
+﻿using System;
+using System.Windows.Forms;
+using KooliProjekt.WinFormsApp.Api;
 
 namespace KooliProjekt.WinFormsApp
 {
@@ -6,11 +8,13 @@ namespace KooliProjekt.WinFormsApp
     {
         private readonly IApiClient _apiClient;
         private readonly IUserView _userView;
+        private readonly Action<string> _showError;
 
-        public UserPresenter(IUserView userView, IApiClient apiClient)
+        public UserPresenter(IUserView userView, IApiClient apiClient, Action<string>? showError = null)
         {
             _apiClient = apiClient;
             _userView = userView;
+            _showError = showError ?? (msg => MessageBox.Show(msg));
             userView.Presenter = this;
         }
 
@@ -44,7 +48,7 @@ namespace KooliProjekt.WinFormsApp
             }
             else
             {
-                MessageBox.Show(result.Error ?? "Tekkis viga kasutajate laadimisel.");
+                _showError(result.Error ?? "Tekkis viga kasutajate laadimisel.");
             }
         }
 
@@ -67,7 +71,7 @@ namespace KooliProjekt.WinFormsApp
             var result = await _apiClient.Save(user);
             if (!result.IsSuccess)
             {
-                MessageBox.Show(result.Error ?? "Salvestamine ebaõnnestus.");
+                _showError(result.Error ?? "Salvestamine ebaõnnestus.");
             }
 
             await Load();
@@ -77,14 +81,14 @@ namespace KooliProjekt.WinFormsApp
         {
             if (_userView.Id == 0)
             {
-                MessageBox.Show("Vali kustutatav kasutaja.");
+                _showError("Vali kustutatav kasutaja.");
                 return;
             }
 
             var result = await _apiClient.Delete(_userView.Id);
             if (!result.IsSuccess)
             {
-                MessageBox.Show(result.Error ?? "Kustutamine ebaõnnestus.");
+                _showError(result.Error ?? "Kustutamine ebaõnnestus.");
             }
 
             await Load();

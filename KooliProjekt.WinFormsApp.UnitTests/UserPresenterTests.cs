@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Moq;
 using Xunit;
 using KooliProjekt.WinFormsApp;
@@ -12,13 +9,15 @@ namespace KooliProjekt.WinFormsApp.UnitTests
     {
         private readonly Mock<IUserView> _viewMock;
         private readonly Mock<IApiClient> _apiClientMock;
+        private readonly Mock<Action<string>> _showErrorMock;
         private readonly UserPresenter _presenter;
 
         public UserPresenterTests()
         {
             _viewMock = new Mock<IUserView>();
             _apiClientMock = new Mock<IApiClient>();
-            _presenter = new UserPresenter(_viewMock.Object, _apiClientMock.Object);
+            _showErrorMock = new Mock<Action<string>>();
+            _presenter = new UserPresenter(_viewMock.Object, _apiClientMock.Object, _showErrorMock.Object);
         }
 
         [Fact]
@@ -78,21 +77,18 @@ namespace KooliProjekt.WinFormsApp.UnitTests
         }
 
         [Fact]
-        public async Task Load_WhenApiReturnsError_ShowsErrorMessage()
+        public async Task Load_WhenApiReturnsError_CallsShowError()
         {
+            // Arrange
             var result = Result<List<User>>.Fail("Test error");
             _apiClientMock.Setup(api => api.List()).ReturnsAsync(result);
 
-            var messageBoxShown = false;
-            System.Windows.Forms.MessageBoxManager.OverrideShow((text, caption, buttons) =>
-            {
-                messageBoxShown = text.Contains("Test error");
-                return System.Windows.Forms.DialogResult.OK;
-            });
-
+            // Act
             await _presenter.Load();
 
-            Assert.True(messageBoxShown);
+            // Assert
+            _showErrorMock.Verify(action => action("Test error"), Times.Once);
         }
+
     }
 }
