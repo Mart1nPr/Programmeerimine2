@@ -1,7 +1,10 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Collections.Generic;
+using System.Net.Http;
 using System.Net.Http.Json;
+using System.Threading.Tasks;
 
-namespace WpfApp.Api
+namespace KooliProjekt.PublicAPI.Api
 {
     public class ApiClient : IApiClient
     {
@@ -9,8 +12,10 @@ namespace WpfApp.Api
 
         public ApiClient()
         {
-            _httpClient = new HttpClient();
-            _httpClient.BaseAddress = new Uri("https://localhost:7136/api/");
+            _httpClient = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7136/api/")
+            };
         }
 
         public async Task<Result<List<User>>> List()
@@ -18,11 +23,11 @@ namespace WpfApp.Api
             try
             {
                 var users = await _httpClient.GetFromJsonAsync<List<User>>("Users");
-                return new Result<List<User>> { Value = users };
+                return Result<List<User>>.Success(users);
             }
             catch (Exception ex)
             {
-                return new Result<List<User>> { Error = ex.Message };
+                return Result<List<User>>.Failure(ex.Message);
             }
         }
 
@@ -38,13 +43,13 @@ namespace WpfApp.Api
                     response = await _httpClient.PutAsJsonAsync($"Users/{user.Id}", user);
 
                 if (!response.IsSuccessStatusCode)
-                    return new Result { Error = $"HTTP {(int)response.StatusCode}: {response.ReasonPhrase}" };
+                    return Result.Failure($"HTTP {(int)response.StatusCode}: {response.ReasonPhrase}");
 
-                return new Result();
+                return Result.Success();
             }
             catch (Exception ex)
             {
-                return new Result { Error = ex.Message };
+                return Result.Failure(ex.Message);
             }
         }
 
@@ -55,13 +60,13 @@ namespace WpfApp.Api
                 var response = await _httpClient.DeleteAsync($"Users/{id}");
 
                 if (!response.IsSuccessStatusCode)
-                    return new Result { Error = $"HTTP {(int)response.StatusCode}: {response.ReasonPhrase}" };
+                    return Result.Failure($"HTTP {(int)response.StatusCode}: {response.ReasonPhrase}");
 
-                return new Result();
+                return Result.Success();
             }
             catch (Exception ex)
             {
-                return new Result { Error = ex.Message };
+                return Result.Failure(ex.Message);
             }
         }
     }

@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
-using WpfApp.Api;
+using KooliProjekt.PublicAPI.Api;
 
 namespace WpfApp
 {

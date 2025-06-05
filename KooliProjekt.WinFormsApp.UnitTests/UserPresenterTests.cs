@@ -1,7 +1,6 @@
 using Moq;
 using Xunit;
-using KooliProjekt.WinFormsApp;
-using KooliProjekt.WinFormsApp.Api;
+using KooliProjekt.PublicAPI.Api;
 
 namespace KooliProjekt.WinFormsApp.UnitTests
 {

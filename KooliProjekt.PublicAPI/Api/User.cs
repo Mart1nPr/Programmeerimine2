@@ -1,6 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
-namespace WpfApp.Api
+namespace KooliProjekt.PublicAPI.Api
 {
     public class User
     {

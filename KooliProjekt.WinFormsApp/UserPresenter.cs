@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
-using KooliProjekt.WinFormsApp.Api;
+using KooliProjekt.PublicAPI.Api;
 
 namespace KooliProjekt.WinFormsApp
 {

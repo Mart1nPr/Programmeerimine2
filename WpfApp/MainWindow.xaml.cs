@@ -1,8 +1,6 @@
-﻿using System;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Windows;
-using WpfApp;
-using WpfApp.Api;
+using KooliProjekt.PublicAPI.Api;
 
 namespace WpfApp
 {

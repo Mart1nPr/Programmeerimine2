@@ -1,5 +1,5 @@
 using Moq;
-using WpfApp.Api;
+using KooliProjekt.PublicAPI.Api;
 
 namespace WpfApp.UnitTests
 {
