@@ -26,6 +26,9 @@ namespace KooliProjekt
             builder.Services.AddScoped<IFolderService, FolderService>();
             builder.Services.AddScoped<IPictureService, PictureService>();
 
+            // CORS
+            builder.Services.AddCors();
+
             var app = builder.Build();
 
             // Call the SeedData method during app startup
@@ -49,7 +52,10 @@ namespace KooliProjekt
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+            app.UseCors(options => options.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+            );
             app.UseRouting();
 
             app.UseAuthentication();

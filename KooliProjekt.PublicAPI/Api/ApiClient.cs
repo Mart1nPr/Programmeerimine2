@@ -31,6 +31,23 @@ namespace KooliProjekt.PublicAPI.Api
             }
         }
 
+        public async Task<Result<User>> Get(int id)
+        {
+            try
+            {
+                var user = await _httpClient.GetFromJsonAsync<User>($"Users/{id}");
+
+                if (user == null)
+                    return Result<User>.Failure("User not found");
+
+                return Result<User>.Success(user);
+            }
+            catch (Exception ex)
+            {
+                return Result<User>.Failure(ex.Message);
+            }
+        }
+
         public async Task<Result> Save(User user)
         {
             try

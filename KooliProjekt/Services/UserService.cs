@@ -46,11 +46,25 @@ namespace KooliProjekt.Services
             }
             else
             {
-                _context.Update(user);
+                var existingUser = await _context.Users.FindAsync(user.Id);
+                if (existingUser != null)
+                {
+                    // Update properties explicitly
+                    existingUser.Name = user.Name;
+                    existingUser.Email = user.Email;
+                    existingUser.Password = user.Password;
+                    existingUser.Registration_Time = user.Registration_Time;
+                }
+                else
+                {
+                    // If not found, add as new or throw
+                    _context.Add(user);
+                }
             }
 
             await _context.SaveChangesAsync();
         }
+
 
         public async Task Delete(int id)
         {

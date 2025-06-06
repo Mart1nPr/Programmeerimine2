@@ -1,0 +1,82 @@
+﻿@page "/users/add"
+@inject NavigationManager Navigation
+@inject IJSRuntime JsRuntime
+@using KooliProjekt.PublicAPI.Api
+@inject IApiClient ApiClient
+
+<PageTitle>Lisa kasutaja</PageTitle>
+
+<h3>Uue kasutaja lisamine</h3>
+
+<EditForm EditContext="@editContext" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label>Name:</label>
+        <InputText @bind-Value="user.Name" class="form-control" />
+        <ValidationMessage For="@(() => user.Name)" />
+    </div>
+
+    <div class="form-group">
+        <label>Email:</label>
+        <InputText @bind-Value="user.Email" class="form-control" />
+        <ValidationMessage For="@(() => user.Email)" />
+    </div>
+
+    <div class="form-group">
+        <label>Password:</label>
+        <InputText @bind-Value="user.Password" class="form-control" type="password" />
+        <ValidationMessage For="@(() => user.Password)" />
+    </div>
+
+    <div class="form-group">
+        <label>Registration Date:</label>
+        <InputDate id="regDate" @bind-Value="registrationDate" class="form-control flex-grow-1" />
+    </div>
+
+
+    <button type="submit" class="btn btn-primary mt-3">Save</button>
+</EditForm>
+
+@code {
+    private User user = new();
+    private EditContext editContext;
+
+    private DateTime registrationDate = DateTime.UtcNow.Date;
+    private string registrationTime = DateTime.UtcNow.ToString("HH:mm:ss");
+
+    protected override void OnInitialized()
+    {
+        editContext = new EditContext(user);
+    }
+
+    private async Task OpenCalendar()
+    {
+        await JsRuntime.InvokeVoidAsync("focusElementById", "regDate");
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (TimeSpan.TryParse(registrationTime, out var time))
+        {
+            user.Registration_Time = registrationDate.Add(time);
+        }
+        else
+        {
+            Console.WriteLine("Invalid time format");
+            return;
+        }
+
+        var result = await ApiClient.Save(user);
+
+        if (result.HasError)
+        {
+            Console.WriteLine("Error on saving: " + result.Error);
+        }
+        else
+        {
+            Navigation.NavigateTo("/");
+        }
+    }
+}

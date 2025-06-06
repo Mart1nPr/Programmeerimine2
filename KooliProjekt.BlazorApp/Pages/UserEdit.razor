@@ -1,0 +1,85 @@
+﻿@page "/users/edit/{id:int}"
+@inject IApiClient ApiClient
+@using KooliProjekt.PublicAPI.Api
+@inject NavigationManager Navigation
+
+<PageTitle>Edit User</PageTitle>
+
+@if (user == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <EditForm EditContext="@editContext" OnValidSubmit="@HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label>Name:</label>
+            <InputText @bind-Value="user.Name" class="form-control" />
+            <ValidationMessage For="@(() => user.Name)" />
+        </div>
+
+        <div class="form-group">
+            <label>Email:</label>
+            <InputText @bind-Value="user.Email" class="form-control" />
+            <ValidationMessage For="@(() => user.Email)" />
+        </div>
+
+        <div class="form-group">
+            <label>Password:</label>
+            <InputText @bind-Value="user.Password" class="form-control" type="password" />
+            <ValidationMessage For="@(() => user.Password)" />
+        </div>
+
+        <div class="form-group">
+            <label>Registration Date:</label>
+            <InputDate id="regDate" @bind-Value="registrationDate" class="form-control flex-grow-1" />
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Save</button>
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+
+    private User user;
+    private EditContext editContext;
+
+    private DateTime registrationDate;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await ApiClient.Get(id);
+        if (!result.HasError && result.Value != null)
+        {
+            user = result.Value;
+            registrationDate = user.Registration_Time.Date; 
+            editContext = new EditContext(user);
+        }
+        else
+        {
+            Navigation.NavigateTo("/");
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        var timePart = user.Registration_Time.TimeOfDay;
+        user.Registration_Time = registrationDate.Add(timePart);
+
+        var result = await ApiClient.Save(user);
+
+        if (!result.HasError)
+        {
+            Navigation.NavigateTo("/");
+        }
+        else
+        {
+            Console.WriteLine("Error saving user: " + result.Error);
+        }
+    }
+}
