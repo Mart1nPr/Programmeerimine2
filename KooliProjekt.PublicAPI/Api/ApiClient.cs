@@ -50,17 +50,20 @@ namespace KooliProjekt.PublicAPI.Api
 
         public async Task<Result> Save(User user)
         {
+            HttpResponseMessage response;
+
             try
             {
-                HttpResponseMessage response;
-
                 if (user.Id == 0)
                     response = await _httpClient.PostAsJsonAsync("Users", user);
                 else
                     response = await _httpClient.PutAsJsonAsync($"Users/{user.Id}", user);
 
                 if (!response.IsSuccessStatusCode)
-                    return Result.Failure($"HTTP {(int)response.StatusCode}: {response.ReasonPhrase}");
+                {
+                    var errorResult = await response.Content.ReadFromJsonAsync<Result>();
+                    return errorResult ?? Result.Failure($"HTTP {(int)response.StatusCode}: {response.ReasonPhrase}");
+                }
 
                 return Result.Success();
             }

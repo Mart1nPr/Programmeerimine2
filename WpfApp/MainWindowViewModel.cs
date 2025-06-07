@@ -45,7 +45,8 @@ namespace WpfApp
                     var result = await _apiClient.Save(SelectedUser);
                     if (result.HasError)
                     {
-                        OnError?.Invoke($"Error while saving user: {result.Error}");
+                        var firstError = result.Errors.SelectMany(e => e.Value).FirstOrDefault();
+                        OnError?.Invoke($"Error while saving user: {firstError}");
                         return;
                     }
 
@@ -62,7 +63,8 @@ namespace WpfApp
                         var result = await _apiClient.Delete(SelectedUser.Id);
                         if (result.HasError)
                         {
-                            OnError?.Invoke($"Error while deleting user: {result.Error}");
+                            var firstError = result.Errors.SelectMany(e => e.Value).FirstOrDefault();
+                            OnError?.Invoke($"Error while deleting user: {firstError}");
                             return;
                         }
 
@@ -81,7 +83,8 @@ namespace WpfApp
             var result = await _apiClient.List();
             if (result.HasError)
             {
-                OnError?.Invoke($"Error while loading users: {result.Error}");
+                var firstError = result.Errors.SelectMany(e => e.Value).FirstOrDefault();
+                OnError?.Invoke($"Error while loading users: {firstError}");
                 return;
             }
 

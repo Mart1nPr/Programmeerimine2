@@ -4,9 +4,9 @@
 @using KooliProjekt.PublicAPI.Api
 @inject IApiClient ApiClient
 
-<PageTitle>Lisa kasutaja</PageTitle>
+<PageTitle>Add user</PageTitle>
 
-<h3>Uue kasutaja lisamine</h3>
+<h3>Add new user</h3>
 
 <EditForm EditContext="@editContext" OnValidSubmit="@HandleValidSubmit">
     <DataAnnotationsValidator />
@@ -72,7 +72,8 @@
 
         if (result.HasError)
         {
-            Console.WriteLine("Error on saving: " + result.Error);
+            var error = result.Errors.SelectMany(e => e.Value).FirstOrDefault() ?? "Unknown error";
+            Console.WriteLine("Error on saving: " + error);
         }
         else
         {

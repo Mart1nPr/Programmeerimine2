@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
+using System.Threading.Tasks;
 using KooliProjekt.PublicAPI.Api;
 
 namespace KooliProjekt.WinFormsApp
@@ -48,7 +51,8 @@ namespace KooliProjekt.WinFormsApp
             }
             else
             {
-                _showError(result.Error ?? "Tekkis viga kasutajate laadimisel.");
+                var firstError = result.Errors.SelectMany(e => e.Value).FirstOrDefault() ?? "Tekkis viga kasutajate laadimisel.";
+                _showError(firstError);
             }
         }
 
@@ -71,7 +75,8 @@ namespace KooliProjekt.WinFormsApp
             var result = await _apiClient.Save(user);
             if (!result.IsSuccess)
             {
-                _showError(result.Error ?? "Salvestamine ebaõnnestus.");
+                var firstError = result.Errors.SelectMany(e => e.Value).FirstOrDefault() ?? "Salvestamine ebaõnnestus.";
+                _showError(firstError);
             }
 
             await Load();
@@ -88,7 +93,8 @@ namespace KooliProjekt.WinFormsApp
             var result = await _apiClient.Delete(_userView.Id);
             if (!result.IsSuccess)
             {
-                _showError(result.Error ?? "Kustutamine ebaõnnestus.");
+                var firstError = result.Errors.SelectMany(e => e.Value).FirstOrDefault() ?? "Kustutamine ebaõnnestus.";
+                _showError(firstError);
             }
 
             await Load();

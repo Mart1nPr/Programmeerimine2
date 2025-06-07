@@ -48,7 +48,7 @@ else
 
     private User user;
     private EditContext editContext;
-
+    private ValidationMessageStore messageStore;
     private DateTime registrationDate;
 
     protected override async Task OnInitializedAsync()
@@ -57,8 +57,9 @@ else
         if (!result.HasError && result.Value != null)
         {
             user = result.Value;
-            registrationDate = user.Registration_Time.Date; 
+            registrationDate = user.Registration_Time.Date;
             editContext = new EditContext(user);
+            messageStore = new ValidationMessageStore(editContext);
         }
         else
         {
@@ -79,7 +80,14 @@ else
         }
         else
         {
-            Console.WriteLine("Error saving user: " + result.Error);
+            messageStore.Clear();
+            foreach (var error in result.Errors)
+            {
+                var fieldIdentifier = new FieldIdentifier(user, error.Key);
+                foreach (var message in error.Value)
+                    messageStore.Add(fieldIdentifier, message);
+            }
+            editContext.NotifyValidationStateChanged();
         }
     }
 }

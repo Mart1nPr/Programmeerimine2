@@ -1,6 +1,10 @@
 using Moq;
 using Xunit;
 using KooliProjekt.PublicAPI.Api;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace KooliProjekt.WinFormsApp.UnitTests
 {
@@ -22,10 +26,8 @@ namespace KooliProjekt.WinFormsApp.UnitTests
         [Fact]
         public void UpdateView_WithNullUser_ResetsFields()
         {
-            // Act
             _presenter.UpdateView(null);
 
-            // Assert
             _viewMock.VerifySet(v => v.Id = 0);
             _viewMock.VerifySet(v => v.Email = string.Empty);
             _viewMock.VerifySet(v => v.Name = string.Empty);
@@ -45,10 +47,8 @@ namespace KooliProjekt.WinFormsApp.UnitTests
                 Registration_Time = new DateTime(2022, 1, 1)
             };
 
-            // Act
             _presenter.UpdateView(user);
 
-            // Assert
             _viewMock.VerifySet(v => v.Id = 1);
             _viewMock.VerifySet(v => v.Email = "test@example.com");
             _viewMock.VerifySet(v => v.Name = "Test");
@@ -67,8 +67,10 @@ namespace KooliProjekt.WinFormsApp.UnitTests
         public async Task Load_WhenApiReturnsSuccess_SetsUsers()
         {
             var users = new List<User> { new User { Id = 1, Name = "Test" } };
+            var result = Result<List<User>>.Success(users);
+
             _apiClientMock.Setup(api => api.List())
-                .ReturnsAsync(Result<List<User>>.Ok(users));
+                .ReturnsAsync(result);
 
             await _presenter.Load();
 
@@ -79,15 +81,16 @@ namespace KooliProjekt.WinFormsApp.UnitTests
         public async Task Load_WhenApiReturnsError_CallsShowError()
         {
             // Arrange
-            var result = Result<List<User>>.Fail("Test error");
+            var result = Result<List<User>>.Failure("Test error");
+
             _apiClientMock.Setup(api => api.List()).ReturnsAsync(result);
 
             // Act
             await _presenter.Load();
 
             // Assert
-            _showErrorMock.Verify(action => action("Test error"), Times.Once);
+            var expectedError = result.Errors.SelectMany(e => e.Value).FirstOrDefault();
+            _showErrorMock.Verify(action => action(expectedError), Times.Once);
         }
-
     }
 }
